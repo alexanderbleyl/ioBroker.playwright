@@ -50,7 +50,7 @@ class Template extends utils.Adapter {
                 postData: JSON.stringify({
                                     right: "usr",
                                     pass: this.config.sma_pass
-                                },
+                                }),
                 headers: {
                     ...interceptedRequest.headers(),
                     "Content-Type": "application/x-www-form-urlencoded"

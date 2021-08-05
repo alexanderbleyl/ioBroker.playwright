@@ -156,7 +156,7 @@ class Template extends utils.Adapter {
             let gridPowerDir = dom.window.document.querySelector('[src="images/icons/arrowGr.png"]')? 'Out' : 'unknown';
             gridPowerDir = dom.window.document.querySelector('[src="images/icons/arrowRd.png"]')? 'In' : gridPowerDir;
             this.setState('grid_power_dir', gridPowerDir);
-            const gridPower = dom.window.document.querySelector('[ng-controller="gridConnectionPointOverview"]') && dom.window.document.querySelector('[ng-controller="gridConnectionPointOverview"]').querySelector('.tileValues.ng-binding')? dom.window.document.querySelector('[ng-controller="gridConnectionPointOverview"]').querySelector('.tileValues.ng-binding').textContent : 'unknown';
+            const gridPower = dom.window.document.querySelector('[ng-controller="gridConnectionPointOverview"]') && dom.window.document.querySelector('[ng-controller="gridConnectionPointOverview"]').querySelector('.tileValues.ng-binding')? (gridPowerDir == 'Out'? '-' : '') + dom.window.document.querySelector('[ng-controller="gridConnectionPointOverview"]').querySelector('.tileValues.ng-binding').textContent : 'unknown';
             this.setState('grid_power', gridPower);
         }, pauseTime);
     }

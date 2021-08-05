@@ -78,6 +78,7 @@ class Template extends utils.Adapter {
                 this.setObjectNotExists(state, {
                     type: "state",
                     common: {
+                        type: "string",
                         name: state,
                     }
                 });

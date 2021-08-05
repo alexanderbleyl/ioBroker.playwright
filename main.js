@@ -12,6 +12,8 @@ const utils = require('@iobroker/adapter-core');
 // const fs = require("fs");
 const { chromium } = require('playwright');
 
+let browser;
+let page;
 let content;
 
 class Template extends utils.Adapter {
@@ -35,7 +37,7 @@ class Template extends utils.Adapter {
      * Is called when databases are connected and adapter received configuration.
      */
     async onReady() {
-            const browser = await chromium.launch({
+            browser = await chromium.launch({
                 headless: true,
                 devtools: false,
                 executablePath: '/usr/bin/chromium-browser',
@@ -47,7 +49,7 @@ class Template extends utils.Adapter {
             });
             this.log.info(`opened browser`);
             const context = await browser.newContext();
-            const page = await context.newPage();
+            page = await context.newPage();
             this.log.info(`opened new page`);
             await page.goto(this.config.sma_url);
             this.log.info('called ${this.config.sma_url}');
@@ -61,7 +63,6 @@ class Template extends utils.Adapter {
             content = await page.content();
             this.log.info(content);
             this.readContentInterval(2000, page);
-            await browser.close();
 
         /*
         For every state in the system there has to be also an object of type state
@@ -114,7 +115,7 @@ class Template extends utils.Adapter {
         */
     }
     
-    readContentInterval = (pauseTime, page) => {
+    readContentInterval = (pauseTime) => {
         setInterval(async () => {
             content = await page.content();
             const parser = new DOMParser();
@@ -136,6 +137,8 @@ class Template extends utils.Adapter {
             // ...
             // clearInterval(interval1);
     
+            page.click("#lLogoutLogin");
+            page.waitForTimeout(2000);
             browser.close();
             callback();
         } catch (e) {

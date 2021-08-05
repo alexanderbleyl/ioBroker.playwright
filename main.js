@@ -33,7 +33,7 @@ class Template extends utils.Adapter {
      * Is called when databases are connected and adapter received configuration.
      */
     async onReady() {
-    
+        this.log.error(`adapter onReady`);
         try {
             // Initialize your adapter here
     
@@ -43,9 +43,10 @@ class Template extends utils.Adapter {
             //new Pupeteer -> login to get sid
             // Create browser instance, and give it a first tab
             const browser = await puppeteer.launch({executablePath: '/usr/bin/chromium-browser'});
-            const page = await browser.newPage();
-    
             this.log.info(`pupeteer browser launched`);
+            
+            const page = await browser.newPage();
+            this.log.info(`new Page init done`);
     
             // Allows you to intercept a request; must appear before
             // your first page.goto()

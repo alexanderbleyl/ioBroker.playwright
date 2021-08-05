@@ -52,9 +52,11 @@ class Template extends utils.Adapter {
             const page = await context.newPage();
             this.log.info(`opened new page`);
             await page.goto(this.config.sma_url);
+            console.log('called ${this.config.sma_url}');
             await page.waitForSelector('#password');
             await page.selectOption('select#user', { label: 'User' });
-			await page.fill("#password", this.config.sma_pass);
+            console.log('try entering pwd ${this.config.sma_pass}');
+            await page.fill('input[name="password"]', this.config.sma_pass);
 			// await page.click("[label=Benutzer]");
 			await page.click("#bLogin");
 			await page.waitForTimeout(2000);

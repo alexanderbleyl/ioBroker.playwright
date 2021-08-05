@@ -12,6 +12,8 @@ const utils = require('@iobroker/adapter-core');
 // const fs = require("fs");
 const puppeteer = require('puppeteer');
 
+let browser;
+
 class Template extends utils.Adapter {
 
     /**
@@ -91,10 +93,22 @@ class Template extends utils.Adapter {
             // this.log.info(`new Page init done`);
 
 
-            const browser = await puppeteer.launch({
+            browser = await puppeteer.launch({
                 executablePath: '/usr/bin/chromium-browser',
                 headless: true,
                 pipe: true,
+                args: [
+                    '--disable-gpu',
+                    '--disable-dev-shm-usage',
+                    '--disable-setuid-sandbox',
+                    '--no-first-run',
+                    '--no-sandbox',
+                    '--no-zygote',
+                    '--deterministic-fetch',
+                    '--disable-features=IsolateOrigins',
+                    '--disable-site-isolation-trials',
+                    // '--single-process',
+                ],
                 // args: [
                 //     '--no-sandbox',
                 //     '--disable-setuid-sandbox',
@@ -138,6 +152,7 @@ class Template extends utils.Adapter {
             const responseBody = await response.text();
 
             this.log.info(`response: "${JSON.stringify(responseBody)}"`);
+            await browser.close();
         } catch (e) {
             this.log.error(`error: "${e.toString()}"`);
         }
@@ -204,7 +219,8 @@ class Template extends utils.Adapter {
             // clearTimeout(timeout2);
             // ...
             // clearInterval(interval1);
-
+    
+            browser.close();
             callback();
         } catch (e) {
             callback();

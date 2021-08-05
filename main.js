@@ -12,6 +12,9 @@ const utils = require('@iobroker/adapter-core');
 // const fs = require("fs");
 const { chromium } = require('playwright');
 
+const jsdom = require("jsdom");
+const { JSDOM } = jsdom;
+
 let browser;
 let page;
 let content;
@@ -52,17 +55,17 @@ class Template extends utils.Adapter {
             page = await context.newPage();
             this.log.info(`opened new page`);
             await page.goto(this.config.sma_url);
-            this.log.info('called ${this.config.sma_url}');
+            this.log.info(`called ${this.config.sma_url}`);
             await page.waitForSelector('#password');
             await page.selectOption('select#user', { label: 'User' });
-            this.log.info('try entering pwd ${this.config.sma_pass}');
+            this.log.info(`try entering pwd ${this.config.sma_pass}`);
             await page.fill('input[name="password"]', this.config.sma_pass);
 			// await page.click("[label=Benutzer]");
 			await page.click("#bLogin");
 			await page.waitForTimeout(2000);
-            content = await page.content();
-            this.log.info(content);
-            this.readContentInterval(2000, page);
+            // content = await page.content();
+            // this.log.info(content);
+            this.readContentInterval(2000);
 
         /*
         For every state in the system there has to be also an object of type state
@@ -118,9 +121,8 @@ class Template extends utils.Adapter {
     readContentInterval = (pauseTime) => {
         setInterval(async () => {
             content = await page.content();
-            const parser = new DOMParser();
-            const html = parser.parseFromString(content, "text/html");
-            const batteryCharge = html.querySelector('#v6100_00295A00') ? html.querySelector('#v6100_00295A00').innerHTML : 'unknown';
+            const dom = new JSDOM(content);
+            const batteryCharge = dom.window.document.querySelector('#v6100_00295A00') ? dom.window.document.querySelector('#v6100_00295A00').innerHTML : 'unknown';
             this.info.log(`batteryCharge: "${batteryCharge}"`);
         }, pauseTime);
     }

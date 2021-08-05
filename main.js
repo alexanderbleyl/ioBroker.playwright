@@ -65,7 +65,7 @@ class Template extends utils.Adapter {
 			await page.waitForTimeout(2000);
             // content = await page.content();
             // this.log.info(content);
-            this.readContentInterval(2000);
+            this.readContentInterval(5000);
 
         /*
         For every state in the system there has to be also an object of type state
@@ -123,6 +123,9 @@ class Template extends utils.Adapter {
             content = await page.content();
             const dom = new JSDOM(content);
             this.log.info(`dom child length: "${dom.window.document.body.children.length}"`);
+            this.log.info(`check element: ${dom.window.document.querySelector('#v6100_00295A00')? 'YES' : 'NO'}`);
+            this.log.info(`check element: ${ dom.window.document.querySelector('#v6100_00295A00').innerHTML}`);
+            this.log.info(`check element: ${ dom.window.document.querySelector('#v6100_00295A00')..textContent}`);
             const batteryCharge = dom.window.document.querySelector('#v6100_00295A00') ? dom.window.document.querySelector('#v6100_00295A00').innerHTML : 'unknown';
             this.log.info(`batteryCharge: "${batteryCharge}"`);
         }, pauseTime);

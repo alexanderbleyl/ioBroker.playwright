@@ -41,6 +41,7 @@ class Template extends utils.Adapter {
                 headless: true,
                 devtools: false,
                 executablePath: '/usr/bin/chromium-browser',
+                args: ["--enable-features=NetworkService", "--no-sandbox"],
             });
             this.log.info(`opened browser`);
             const context = await browser.newContext();

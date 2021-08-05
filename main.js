@@ -10,7 +10,7 @@ const utils = require('@iobroker/adapter-core');
 
 // Load your modules here, e.g.:
 // const fs = require("fs");
-const puppeteer = require('puppeteer');
+const playwright = require('playwright');
 
 let browser;
 
@@ -35,6 +35,24 @@ class Template extends utils.Adapter {
      * Is called when databases are connected and adapter received configuration.
      */
     async onReady() {
+    
+    
+        for (const browserType of ['webkit']) {
+            this.log.info(`opened browser ${browserType}`);
+            const browser = await playwright[browserType].launch();
+            const context = await browser.newContext();
+            const page = await context.newPage();
+            await page.goto(this.config.sma_url);
+			await page.click("[label=Benutzer]");
+			await page.fill("#password", this.config.sma_pass);
+			await page.click("#bLogin");
+            const content = await page.content();
+            this.log.info(content);
+            await browser.close();
+        }
+        
+        
+        
         //
         //
         // const browser = await puppeteer.launch({
@@ -77,8 +95,8 @@ class Template extends utils.Adapter {
         // await browser.close();
         
         
-        this.log.error(`adapter onReady`);
-        try {
+        // this.log.error(`adapter onReady`);
+        // try {
             // Initialize your adapter here
 
             // The adapters config (in the instance object everything under the attribute "native") is accessible via
@@ -93,69 +111,69 @@ class Template extends utils.Adapter {
             // this.log.info(`new Page init done`);
 
 
-            browser = await puppeteer.launch({
-                executablePath: '/usr/bin/chromium-browser',
-                headless: true,
-                // pipe: true,
-                args: [
-                    '--disable-gpu',
-                    '--disable-dev-shm-usage',
-                    '--disable-setuid-sandbox',
-                    '--no-first-run',
-                    '--no-sandbox',
-                    '--no-zygote',
-                    '--deterministic-fetch',
-                    '--disable-features=IsolateOrigins',
-                    '--disable-site-isolation-trials',
-                    // '--single-process',
-                ],
-                // args: [
-                //     '--no-sandbox',
-                //     '--disable-setuid-sandbox',
-                //     '--disable-dev-shm-usage',
-                //     '--single-process'
-                // ]
-            });
-            this.log.info(`pupeteer browser launched`);
-
-            const page = await browser.newPage();
-            this.log.info(`new Page init done`);
-
-            await page.goto(this.config.sma_url);
-
-            // Allows you to intercept a request; must appear before
-            // your first page.goto()
-            await page.setRequestInterception(true);
-
-            // Request intercept handler... will be triggered with
-            // each page.goto() statement
-            page.on('request', interceptedRequest => {
-
-                // Here, is where you change the request method and
-                // add your post data
-                var data = {
-                    'method': 'POST',
-                    'postData': JSON.stringify({
-                        right: "usr",
-                        pass: this.config.sma_pass
-                    })
-                };
-
-                this.log.info(`pupeteer send data: "${JSON.stringify(data)}"`);
-
-                // Request modified... finish sending!
-                interceptedRequest.continue(data);
-            });
-
-            // Navigate, trigger the intercept, and resolve the response
-            const response = await page.goto(this.config.sma_url);
-            const responseBody = await response.text();
-
-            this.log.info(`response: "${JSON.stringify(responseBody)}"`);
-            await browser.close();
-        } catch (e) {
-            this.log.error(`error: "${e.toString()}"`);
-        }
+        //     browser = await puppeteer.launch({
+        //         executablePath: '/usr/bin/chromium-browser',
+        //         headless: true,
+        //         // pipe: true,
+        //         args: [
+        //             '--disable-gpu',
+        //             '--disable-dev-shm-usage',
+        //             '--disable-setuid-sandbox',
+        //             '--no-first-run',
+        //             '--no-sandbox',
+        //             '--no-zygote',
+        //             '--deterministic-fetch',
+        //             '--disable-features=IsolateOrigins',
+        //             '--disable-site-isolation-trials',
+        //             // '--single-process',
+        //         ],
+        //         // args: [
+        //         //     '--no-sandbox',
+        //         //     '--disable-setuid-sandbox',
+        //         //     '--disable-dev-shm-usage',
+        //         //     '--single-process'
+        //         // ]
+        //     });
+        //     this.log.info(`pupeteer browser launched`);
+        //
+        //     const page = await browser.newPage();
+        //     this.log.info(`new Page init done`);
+        //
+        //     await page.goto(this.config.sma_url);
+        //
+        //     // Allows you to intercept a request; must appear before
+        //     // your first page.goto()
+        //     await page.setRequestInterception(true);
+        //
+        //     // Request intercept handler... will be triggered with
+        //     // each page.goto() statement
+        //     page.on('request', interceptedRequest => {
+        //
+        //         // Here, is where you change the request method and
+        //         // add your post data
+        //         var data = {
+        //             'method': 'POST',
+        //             'postData': JSON.stringify({
+        //                 right: "usr",
+        //                 pass: this.config.sma_pass
+        //             })
+        //         };
+        //
+        //         this.log.info(`pupeteer send data: "${JSON.stringify(data)}"`);
+        //
+        //         // Request modified... finish sending!
+        //         interceptedRequest.continue(data);
+        //     });
+        //
+        //     // Navigate, trigger the intercept, and resolve the response
+        //     const response = await page.goto(this.config.sma_url);
+        //     const responseBody = await response.text();
+        //
+        //     this.log.info(`response: "${JSON.stringify(responseBody)}"`);
+        //     await browser.close();
+        // } catch (e) {
+        //     this.log.error(`error: "${e.toString()}"`);
+        // }
 
         /*
         For every state in the system there has to be also an object of type state

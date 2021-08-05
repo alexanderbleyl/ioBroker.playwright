@@ -122,12 +122,19 @@ class Template extends utils.Adapter {
         setInterval(async () => {
             content = await page.content();
             const dom = new JSDOM(content);
-            this.log.info(`dom child length: "${dom.window.document.body.children.length}"`);
-            this.log.info(`check element: ${dom.window.document.querySelector('#v6100_00295A00')? 'YES' : 'NO'}`);
-            this.log.info(`check element: ${ dom.window.document.querySelector('#v6100_00295A00').innerHTML}`);
-            this.log.info(`check element: ${ dom.window.document.querySelector('#v6100_00295A00').textContent}`);
-            const batteryCharge = dom.window.document.querySelector('#v6100_00295A00') ? dom.window.document.querySelector('#v6100_00295A00').innerHTML : 'unknown';
-            this.log.info(`batteryCharge: "${batteryCharge}"`);
+            // this.log.info(`dom child length: "${dom.window.document.body.children.length}"`);
+            // this.log.info(`check element: ${dom.window.document.querySelector('#v6100_00295A00')? 'YES' : 'NO'}`);
+            // this.log.info(`check element: ${ dom.window.document.querySelector('#v6100_00295A00').innerHTML}`);
+            // this.log.info(`check element: ${ dom.window.document.querySelector('#v6100_00295A00').textContent}`);
+            const smaStatus = dom.window.document.querySelector('#v6180_08214800') ? dom.window.document.querySelector('#v6180_08214800').innerHTML : 'unknown';
+            this.setState('sma_status', smaStatus);
+            const batteryTile = dom.window.document.querySelector('#v6100_00295A00').parentElement.parentElement.parentElement.parentElement.parentElement || false;
+            const batteryOperation = batteryTile && batteryTile.querySelectorAll('tr')[0].querySelectorAll('td')[2].innerHTML || 'unknown';
+            this.setState('battery_operation', batteryOperation);
+            const batteryCharge = batteryTile && batteryTile.querySelectorAll('tr')[1].querySelectorAll('td')[1].innerHTML || 'unknown';
+            this.setState('battery_charge', batteryCharge);
+            const batteryWatt = batteryTile && batteryTile.querySelectorAll('tr')[2].querySelectorAll('td')[1].innerHTML || 'unknown';
+            this.setState('battery_watt', batteryWatt);
         }, pauseTime);
     }
 

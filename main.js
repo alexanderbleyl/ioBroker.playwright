@@ -60,7 +60,7 @@ class Template extends utils.Adapter {
     
         const response = await page.goto(this.config.sma_url);
     
-        console.log({
+        this.log.info({
             url: response.url(),
             statusCode: response.status(),
             body: await response.text()

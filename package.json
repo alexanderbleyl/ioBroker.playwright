@@ -13,10 +13,8 @@
     "url": "https://github.com/alexanderbleyl/ioBroker.pupeteer_sma"
   },
   "dependencies": {
-    "@iobroker/adapter-core": "^2.5.0"
-  },
-  "main": "main.js",
-  "devDependencies": {
+    "@iobroker/adapter-core": "^2.5.0",
     "playwright": "1.13.1"
-  }
+  },
+  "main": "main.js"
 }

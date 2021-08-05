@@ -125,7 +125,7 @@ class Template extends utils.Adapter {
             this.log.info(`dom child length: "${dom.window.document.body.children.length}"`);
             this.log.info(`check element: ${dom.window.document.querySelector('#v6100_00295A00')? 'YES' : 'NO'}`);
             this.log.info(`check element: ${ dom.window.document.querySelector('#v6100_00295A00').innerHTML}`);
-            this.log.info(`check element: ${ dom.window.document.querySelector('#v6100_00295A00')..textContent}`);
+            this.log.info(`check element: ${ dom.window.document.querySelector('#v6100_00295A00').textContent}`);
             const batteryCharge = dom.window.document.querySelector('#v6100_00295A00') ? dom.window.document.querySelector('#v6100_00295A00').innerHTML : 'unknown';
             this.log.info(`batteryCharge: "${batteryCharge}"`);
         }, pauseTime);

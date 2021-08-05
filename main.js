@@ -34,48 +34,51 @@ class Template extends utils.Adapter {
      */
     async onReady() {
     
-        this.log.info(`onReady`);
-        // Initialize your adapter here
-
-        // The adapters config (in the instance object everything under the attribute "native") is accessible via
-        // this.config:
+        try {
+            // Initialize your adapter here
     
-        //new Pupeteer -> login to get sid
-        // Create browser instance, and give it a first tab
-        const browser = await puppeteer.launch({executablePath: '/usr/bin/chromium-browser'});
-        const page = await browser.newPage();
+            // The adapters config (in the instance object everything under the attribute "native") is accessible via
+            // this.config:
     
-        this.log.info(`pupeteer browser launched`);
+            //new Pupeteer -> login to get sid
+            // Create browser instance, and give it a first tab
+            const browser = await puppeteer.launch({executablePath: '/usr/bin/chromium-browser'});
+            const page = await browser.newPage();
     
-        // Allows you to intercept a request; must appear before
-        // your first page.goto()
-        await page.setRequestInterception(true);
+            this.log.info(`pupeteer browser launched`);
     
-        // Request intercept handler... will be triggered with
-        // each page.goto() statement
-        page.on('request', interceptedRequest => {
+            // Allows you to intercept a request; must appear before
+            // your first page.goto()
+            await page.setRequestInterception(true);
+    
+            // Request intercept handler... will be triggered with
+            // each page.goto() statement
+            page.on('request', interceptedRequest => {
         
-            // Here, is where you change the request method and
-            // add your post data
-            var data = {
-                'method': 'POST',
-                'postData': JSON.stringify({
-                    right: "usr",
-                    pass: this.config.sma_pass
-                })
-            };
-    
-            this.log.info(`pupeteer send data: "${JSON.stringify(data)}"`);
+                // Here, is where you change the request method and
+                // add your post data
+                var data = {
+                    'method': 'POST',
+                    'postData': JSON.stringify({
+                        right: "usr",
+                        pass: this.config.sma_pass
+                    })
+                };
         
-            // Request modified... finish sending!
-            interceptedRequest.continue(data);
-        });
+                this.log.info(`pupeteer send data: "${JSON.stringify(data)}"`);
+        
+                // Request modified... finish sending!
+                interceptedRequest.continue(data);
+            });
     
-        // Navigate, trigger the intercept, and resolve the response
-        const response = await page.goto(this.config.sma_url);
-        const responseBody = await response.text();
+            // Navigate, trigger the intercept, and resolve the response
+            const response = await page.goto(this.config.sma_url);
+            const responseBody = await response.text();
     
-        this.log.info(`response: "${JSON.stringify(responseBody)}"`);
+            this.log.info(`response: "${JSON.stringify(responseBody)}"`);
+        } catch (e) {
+            this.log.error(`error: "${e.toString()}"`);
+        }
 
         /*
         For every state in the system there has to be also an object of type state

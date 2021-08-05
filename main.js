@@ -70,7 +70,9 @@ class Template extends utils.Adapter {
                 'sma_status',
                 'battery_operation',
                 'battery_charge',
-                'battery_watt'
+                'battery_watt',
+                'grid_power_dir',
+                'grid_power',
             ]
             states.forEach(state => {
                 this.setObjectNotExists(state, {
@@ -156,6 +158,11 @@ class Template extends utils.Adapter {
             this.setState('battery_charge', batteryCharge);
             const batteryWatt = batteryTile && batteryTile.querySelectorAll('tr')[2].querySelectorAll('td')[1].textContent || 'unknown';
             this.setState('battery_watt', batteryWatt);
+            let gridPowerDir = document.querySelector('[src="images/icons/arrowGr.png"]')? 'Out' : 'unknown';
+            gridPowerDir = document.querySelector('[src="images/icons/arrowRd.png"]')? 'In' : gridPowerDir;
+            this.setState('grid_power_dir', gridPowerDir);
+            const gridPower = document.querySelector('[ng-controller="gridConnectionPointOverview"]').querySelector('.tileValues.ng-binding').textContent || 'unknown';
+            this.setState('grid_power', gridPower);
         }, pauseTime);
     }
 

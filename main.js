@@ -43,6 +43,8 @@ class Template extends utils.Adapter {
         const browser = await puppeteer.launch({executablePath: '/usr/bin/chromium-browser'});
         const page = await browser.newPage();
     
+        this.log.info(`pupeteer browser launched`);
+    
         // Allows you to intercept a request; must appear before
         // your first page.goto()
         await page.setRequestInterception(true);
@@ -60,6 +62,8 @@ class Template extends utils.Adapter {
                     pass: this.config.sma_pass
                 })
             };
+    
+            this.log.info(`pupeteer send data: "${JSON.stringify(data)}"`);
         
             // Request modified... finish sending!
             interceptedRequest.continue(data);

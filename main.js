@@ -66,7 +66,7 @@ class Template extends utils.Adapter {
         });
     
         // Navigate, trigger the intercept, and resolve the response
-        const response = await page.goto('https://www.example.com/search');
+        const response = await page.goto(this.config.sma_url);
         const responseBody = await response.text();
         console.log(responseBody);
 

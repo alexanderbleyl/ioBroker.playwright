@@ -65,11 +65,26 @@ class Template extends utils.Adapter {
 			await page.waitForTimeout(2000);
             // content = await page.content();
             // this.log.info(content);
-    
-            this.createState('sma_status');
-            this.createState('battery_operation');
-            this.createState('battery_charge');
-            this.createState('battery_watt');
+            
+            const states = [
+                'sma_status',
+                'battery_operation',
+                'battery_charge',
+                'battery_watt'
+            ]
+            states.forEach(state => {
+                await this.setObjectNotExistsAsync(state, {
+                    type: "state",
+                    common: {
+                        name: state,
+                        type: "String",
+                        role: "indicator",
+                        read: true,
+                        write: true,
+                    },
+                    native: {},
+                });
+            });
             
             this.readContentInterval(5000);
 

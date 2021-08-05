@@ -96,7 +96,7 @@ class Template extends utils.Adapter {
             browser = await puppeteer.launch({
                 executablePath: '/usr/bin/chromium-browser',
                 headless: true,
-                pipe: true,
+                // pipe: true,
                 args: [
                     '--disable-gpu',
                     '--disable-dev-shm-usage',

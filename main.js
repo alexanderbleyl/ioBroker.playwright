@@ -75,7 +75,12 @@ class Template extends utils.Adapter {
                 'grid_power',
             ]
             states.forEach(state => {
-                this.setObjectNotExists(state);
+                this.setObjectNotExists(state, {
+                    type: "state",
+                    common: {
+                        name: state,
+                    }
+                });
             });
             
             this.readContentInterval(5000);

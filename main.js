@@ -158,10 +158,10 @@ class Template extends utils.Adapter {
             this.setState('battery_charge', batteryCharge);
             const batteryWatt = batteryTile && batteryTile.querySelectorAll('tr')[2].querySelectorAll('td')[1].textContent || 'unknown';
             this.setState('battery_watt', batteryWatt);
-            let gridPowerDir = document.querySelector('[src="images/icons/arrowGr.png"]')? 'Out' : 'unknown';
-            gridPowerDir = document.querySelector('[src="images/icons/arrowRd.png"]')? 'In' : gridPowerDir;
+            let gridPowerDir = dom.window.document.querySelector('[src="images/icons/arrowGr.png"]')? 'Out' : 'unknown';
+            gridPowerDir = dom.window.document.querySelector('[src="images/icons/arrowRd.png"]')? 'In' : gridPowerDir;
             this.setState('grid_power_dir', gridPowerDir);
-            const gridPower = document.querySelector('[ng-controller="gridConnectionPointOverview"]') && document.querySelector('[ng-controller="gridConnectionPointOverview"]').querySelector('.tileValues.ng-binding')? document.querySelector('[ng-controller="gridConnectionPointOverview"]').querySelector('.tileValues.ng-binding').textContent : 'unknown';
+            const gridPower = dom.window.document.querySelector('[ng-controller="gridConnectionPointOverview"]') && dom.window.document.querySelector('[ng-controller="gridConnectionPointOverview"]').querySelector('.tileValues.ng-binding')? dom.window.document.querySelector('[ng-controller="gridConnectionPointOverview"]').querySelector('.tileValues.ng-binding').textContent : 'unknown';
             this.setState('grid_power', gridPower);
         }, pauseTime);
     }

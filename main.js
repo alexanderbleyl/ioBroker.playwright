@@ -122,6 +122,7 @@ class Template extends utils.Adapter {
         setInterval(async () => {
             content = await page.content();
             const dom = new JSDOM(content);
+            this.log.info(`dom child length: "${dom.window.document.body.children.length}"`);
             const batteryCharge = dom.window.document.querySelector('#v6100_00295A00') ? dom.window.document.querySelector('#v6100_00295A00').innerHTML : 'unknown';
             this.log.info(`batteryCharge: "${batteryCharge}"`);
         }, pauseTime);

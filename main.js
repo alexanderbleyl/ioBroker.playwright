@@ -12,6 +12,8 @@ const utils = require('@iobroker/adapter-core');
 // const fs = require("fs");
 const puppeteer = require('puppeteer');
 
+const devices = require("puppeteer/DeviceDescriptors");
+
 class Template extends utils.Adapter {
 
     /**
@@ -92,7 +94,8 @@ class Template extends utils.Adapter {
 
 
             const browser = await puppeteer.launch({
-                args:['--no-sandbox'],
+                args: ["--enable-features=NetworkService", "--no-sandbox"],
+                ignoreHTTPSErrors: true,
                 executablePath: '/usr/bin/chromium-browser',
                 pipe: true
             });

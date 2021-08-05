@@ -40,11 +40,15 @@ class Template extends utils.Adapter {
             ignoreHTTPSErrors: true,
             executablePath: '/usr/bin/chromium-browser'
         });
+        this.log.info(`browser launched`);
         const page = await browser.newPage();
+        this.log.info(`newPage opened`);
     
         await page.setRequestInterception(true);
+        this.log.info(`page.setRequestInterception`);
     
         page.once("request", interceptedRequest => {
+        this.log.info(`page request`);
             interceptedRequest.continue({
                 method: "POST",
                 postData: JSON.stringify({
@@ -59,6 +63,7 @@ class Template extends utils.Adapter {
         });
     
         const response = await page.goto(this.config.sma_url);
+        this.log.info(`got response`);
     
         this.log.info({
             url: response.url(),

@@ -43,7 +43,7 @@ class Template extends utils.Adapter {
                 executablePath: '/usr/bin/chromium-browser',
                 args: [
                     "--enable-features=NetworkService",
-                    "--no-sandbox",
+                    // "--no-sandbox",
                     "--disable-dev-shm-usage"
                 ],
             });

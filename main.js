@@ -40,7 +40,7 @@ class Template extends utils.Adapter {
     
         //new Pupeteer -> login to get sid
         // Create browser instance, and give it a first tab
-        const browser = await puppeteer.launch();
+        const browser = await puppeteer.launch({executablePath: '/usr/bin/chromium-browser'});
         const page = await browser.newPage();
     
         // Allows you to intercept a request; must appear before

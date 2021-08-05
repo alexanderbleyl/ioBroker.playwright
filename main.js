@@ -33,6 +33,8 @@ class Template extends utils.Adapter {
      * Is called when databases are connected and adapter received configuration.
      */
     async onReady() {
+    
+        this.log.info(`onReady`);
         // Initialize your adapter here
 
         // The adapters config (in the instance object everything under the attribute "native") is accessible via

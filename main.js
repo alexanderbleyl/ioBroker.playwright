@@ -73,7 +73,7 @@ class Template extends utils.Adapter {
                 'battery_watt'
             ]
             states.forEach(state => {
-                await this.setObjectNotExistsAsync(state, {
+                this.setObjectNotExists(state, {
                     type: "state",
                     common: {
                         name: state,

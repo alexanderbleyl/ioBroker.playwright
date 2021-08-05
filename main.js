@@ -10,7 +10,7 @@ const utils = require('@iobroker/adapter-core');
 
 // Load your modules here, e.g.:
 // const fs = require("fs");
-const { firefox } = require('playwright');
+const { chromium } = require('playwright');
 
 let browser;
 
@@ -37,7 +37,7 @@ class Template extends utils.Adapter {
     async onReady() {
     
     
-            const browser = await firefox.launch();
+            const browser = await chromium.launch();
             this.log.info(`opened browser`);
             const context = await browser.newContext();
             const page = await context.newPage();

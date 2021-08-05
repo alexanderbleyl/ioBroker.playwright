@@ -94,12 +94,13 @@ class Template extends utils.Adapter {
             const browser = await puppeteer.launch({
                 executablePath: '/usr/bin/chromium-browser',
                 headless: true,
-                args: [
-                    '--no-sandbox',
-                    '--disable-setuid-sandbox',
-                    '--disable-dev-shm-usage',
-                    '--single-process'
-                ]
+                pipe: true,
+                // args: [
+                //     '--no-sandbox',
+                //     '--disable-setuid-sandbox',
+                //     '--disable-dev-shm-usage',
+                //     '--single-process'
+                // ]
             });
             this.log.info(`pupeteer browser launched`);
 

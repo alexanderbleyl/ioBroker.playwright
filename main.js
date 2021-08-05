@@ -50,12 +50,15 @@ class Template extends utils.Adapter {
             this.log.info(`opened browser`);
             const context = await browser.newContext();
             const page = await context.newPage();
+            this.log.info(`opened new page`);
             await page.goto(this.config.sma_url);
-			await page.click("[label=Benutzer]");
-			await page.fill("#password", this.config.sma_pass);
-			await page.click("#bLogin");
             const content = await page.content();
             this.log.info(content);
+			// await page.click("[label=Benutzer]");
+			// await page.fill("#password", this.config.sma_pass);
+			// await page.click("#bLogin");
+            // const content = await page.content();
+            // this.log.info(content);
             await browser.close();
         
         

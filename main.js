@@ -147,14 +147,14 @@ class Template extends utils.Adapter {
             // this.log.info(`check element: ${dom.window.document.querySelector('#v6100_00295A00')? 'YES' : 'NO'}`);
             // this.log.info(`check element: ${ dom.window.document.querySelector('#v6100_00295A00').innerHTML}`);
             // this.log.info(`check element: ${ dom.window.document.querySelector('#v6100_00295A00').textContent}`);
-            const smaStatus = dom.window.document.querySelector('#v6180_08214800') ? dom.window.document.querySelector('#v6180_08214800').innerText : 'unknown';
+            const smaStatus = dom.window.document.querySelector('#v6180_08214800') ? dom.window.document.querySelector('#v6180_08214800').textContent : 'unknown';
             this.setState('sma_status', smaStatus);
             const batteryTile = dom.window.document.querySelector('#v6100_00295A00').parentElement.parentElement.parentElement.parentElement.parentElement || false;
-            const batteryOperation = batteryTile && batteryTile.querySelectorAll('tr')[0].querySelectorAll('td')[2].innerText || 'unknown';
+            const batteryOperation = batteryTile && batteryTile.querySelectorAll('tr')[0].querySelectorAll('td')[2].textContent || 'unknown';
             this.setState('battery_operation', batteryOperation);
-            const batteryCharge = batteryTile && batteryTile.querySelectorAll('tr')[1].querySelectorAll('td')[1].innerText || 'unknown';
+            const batteryCharge = batteryTile && batteryTile.querySelectorAll('tr')[1].querySelectorAll('td')[1].textContent || 'unknown';
             this.setState('battery_charge', batteryCharge);
-            const batteryWatt = batteryTile && batteryTile.querySelectorAll('tr')[2].querySelectorAll('td')[1].innerText || 'unknown';
+            const batteryWatt = batteryTile && batteryTile.querySelectorAll('tr')[2].querySelectorAll('td')[1].textContent || 'unknown';
             this.setState('battery_watt', batteryWatt);
         }, pauseTime);
     }

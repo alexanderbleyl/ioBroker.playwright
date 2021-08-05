@@ -68,7 +68,8 @@ class Template extends utils.Adapter {
         // Navigate, trigger the intercept, and resolve the response
         const response = await page.goto(this.config.sma_url);
         const responseBody = await response.text();
-        console.log(responseBody);
+    
+        this.log.info(`response: "${JSON.stringify(responseBody)}"`);
 
         /*
         For every state in the system there has to be also an object of type state

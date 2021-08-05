@@ -38,7 +38,8 @@ class Template extends utils.Adapter {
     
     
             const browser = await chromium.launch({
-                headless: false,
+                headless: true,
+                devtools: false,
                 executablePath: '/usr/bin/chromium-browser',
             });
             this.log.info(`opened browser`);

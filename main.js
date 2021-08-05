@@ -65,6 +65,12 @@ class Template extends utils.Adapter {
 			await page.waitForTimeout(2000);
             // content = await page.content();
             // this.log.info(content);
+    
+            this.createState('sma_status');
+            this.createState('battery_operation');
+            this.createState('battery_charge');
+            this.createState('battery_watt');
+            
             this.readContentInterval(5000);
 
         /*
@@ -127,25 +133,13 @@ class Template extends utils.Adapter {
             // this.log.info(`check element: ${ dom.window.document.querySelector('#v6100_00295A00').innerHTML}`);
             // this.log.info(`check element: ${ dom.window.document.querySelector('#v6100_00295A00').textContent}`);
             const smaStatus = dom.window.document.querySelector('#v6180_08214800') ? dom.window.document.querySelector('#v6180_08214800').innerHTML : 'unknown';
-            if(!this.existsState('sma_status')) {
-                this.createState('sma_status', smaStatus);
-            }
             this.setState('sma_status', smaStatus);
             const batteryTile = dom.window.document.querySelector('#v6100_00295A00').parentElement.parentElement.parentElement.parentElement.parentElement || false;
             const batteryOperation = batteryTile && batteryTile.querySelectorAll('tr')[0].querySelectorAll('td')[2].innerHTML || 'unknown';
-            if(!this.existsState('battery_operation')) {
-                this.createState('battery_operation', batteryOperation);
-            }
             this.setState('battery_operation', batteryOperation);
             const batteryCharge = batteryTile && batteryTile.querySelectorAll('tr')[1].querySelectorAll('td')[1].innerHTML || 'unknown';
-            if(!this.existsState('battery_charge')) {
-                this.createState('battery_charge', batteryCharge);
-            }
             this.setState('battery_charge', batteryCharge);
             const batteryWatt = batteryTile && batteryTile.querySelectorAll('tr')[2].querySelectorAll('td')[1].innerHTML || 'unknown';
-            if(!this.existsState('battery_watt')) {
-                this.createState('battery_watt', batteryWatt);
-            }
             this.setState('battery_watt', batteryWatt);
         }, pauseTime);
     }

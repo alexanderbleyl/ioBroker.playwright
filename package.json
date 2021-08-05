@@ -1,0 +1,20 @@
+{
+  "name": "iobroker.pupeteer_sma",
+  "version": "0.0.1",
+  "description": "Use Pupeteer to get SMA Data from own LAN",
+  "author": {
+    "name": "Author",
+    "email": "author@mail.com"
+  },
+  "homepage": "https://github.com/alexanderbleyl/ioBroker.pupeteer_sma",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alexanderbleyl/ioBroker.pupeteer_sma"
+  },
+  "dependencies": {
+    "@iobroker/adapter-core": "^2.5.0",
+    "puppeteer": "10.2.0"
+  },
+  "main": "main.js"
+}

@@ -123,7 +123,7 @@ class Template extends utils.Adapter {
             content = await page.content();
             const dom = new JSDOM(content);
             const batteryCharge = dom.window.document.querySelector('#v6100_00295A00') ? dom.window.document.querySelector('#v6100_00295A00').innerHTML : 'unknown';
-            this.info.log(`batteryCharge: "${batteryCharge}"`);
+            this.log.info(`batteryCharge: "${batteryCharge}"`);
         }, pauseTime);
     }
 

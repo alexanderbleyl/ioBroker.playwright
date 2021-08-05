@@ -36,9 +36,10 @@ class Template extends utils.Adapter {
     
     
         const browser = await puppeteer.launch({
-            args: ["--enable-features=NetworkService", "--no-sandbox"],
-            ignoreHTTPSErrors: true,
-            executablePath: '/usr/bin/chromium-browser'
+            // args: ["--enable-features=NetworkService", "--no-sandbox"],
+            // ignoreHTTPSErrors: true,
+            executablePath: '/usr/bin/chromium-browser',
+            pipe: true
         });
         this.log.info(`browser launched`);
         const page = await browser.newPage();

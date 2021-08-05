@@ -79,8 +79,8 @@ class Template extends utils.Adapter {
                     type: "state",
                     common: {
                         name: state,
-                        type: "string",
-                        role: "indicator",
+                        type: "String",
+                        role: "variable",
                         read: true,
                         write: true,
                     },
@@ -161,7 +161,7 @@ class Template extends utils.Adapter {
             let gridPowerDir = document.querySelector('[src="images/icons/arrowGr.png"]')? 'Out' : 'unknown';
             gridPowerDir = document.querySelector('[src="images/icons/arrowRd.png"]')? 'In' : gridPowerDir;
             this.setState('grid_power_dir', gridPowerDir);
-            const gridPower = document.querySelector('[ng-controller="gridConnectionPointOverview"]').querySelector('.tileValues.ng-binding').textContent || 'unknown';
+            const gridPower = document.querySelector('[ng-controller="gridConnectionPointOverview"]') && document.querySelector('[ng-controller="gridConnectionPointOverview"]').querySelector('.tileValues.ng-binding')? document.querySelector('[ng-controller="gridConnectionPointOverview"]').querySelector('.tileValues.ng-binding').textContent : 'unknown';
             this.setState('grid_power', gridPower);
         }, pauseTime);
     }

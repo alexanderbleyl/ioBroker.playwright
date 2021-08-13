@@ -150,19 +150,19 @@ class Template extends utils.Adapter {
             // this.log.info(`check element: ${ dom.window.document.querySelector('#v6100_00295A00').innerHTML}`);
             // this.log.info(`check element: ${ dom.window.document.querySelector('#v6100_00295A00').textContent}`);
             const smaStatus = dom.window.document.querySelector('#v6180_08214800') ? dom.window.document.querySelector('#v6180_08214800').textContent : 'unknown';
-            this.setState('sma_status', smaStatus);
+            this.setState('sma_status', {val: smaStatus});
             const batteryTile = dom.window.document.querySelector('#v6100_00295A00').parentElement.parentElement.parentElement.parentElement.parentElement || false;
             const batteryOperation = batteryTile && batteryTile.querySelectorAll('tr')[0].querySelectorAll('td')[2].textContent || 'unknown';
-            this.setState('battery_operation', batteryOperation);
+            this.setState('battery_operation', {val: batteryOperation});
             const batteryCharge = (batteryOperation != 'unknown'? (batteryOperation == 'Discharge battery'? '-' : '') : '') + batteryTile && batteryTile.querySelectorAll('tr')[1].querySelectorAll('td')[1].textContent || 'unknown';
-            this.setState('battery_charge', batteryCharge);
+            this.setState('battery_charge', {val: batteryCharge});
             const batteryWatt = batteryTile && batteryTile.querySelectorAll('tr')[2].querySelectorAll('td')[1].textContent || 'unknown';
-            this.setState('battery_watt', batteryWatt);
+            this.setState('battery_watt', {val: batteryWatt});
             let gridPowerDir = dom.window.document.querySelector('[src="images/icons/arrowGr.png"]')? 'Out' : 'unknown';
             gridPowerDir = dom.window.document.querySelector('[src="images/icons/arrowRd.png"]')? 'In' : gridPowerDir;
-            this.setState('grid_power_dir', gridPowerDir);
+            this.setState('grid_power_dir', {val: gridPowerDir});
             const gridPower = dom.window.document.querySelector('[ng-controller="gridConnectionPointOverview"]') && dom.window.document.querySelector('[ng-controller="gridConnectionPointOverview"]').querySelector('.tileValues.ng-binding')? (gridPowerDir == 'Out'? '-' : '') + dom.window.document.querySelector('[ng-controller="gridConnectionPointOverview"]').querySelector('.tileValues.ng-binding').textContent : 'unknown';
-            this.setState('grid_power', gridPower);
+            this.setState('grid_power', {val: gridPower});
         }, pauseTime);
     }
 

@@ -64,27 +64,27 @@ class Template extends utils.Adapter {
 			await page.click("#bLogin");
 			await page.waitForTimeout(5000);
             
-            const states = [
-                'sma_status',
-                'battery_operation',
-                'battery_charge',
-                'battery_watt',
-                'grid_power_dir',
-                'grid_power',
-            ]
-            states.forEach(state => {
-                this.setObjectNotExists(state, {
-                    type: "state",
-                    common: {
-                        name: state,
-                        type: "String",
-                        role: "variable",
-                        read: true,
-                        write: true,
-                    },
-                    native: {},
-                });
-            });
+            // const states = [
+            //     'sma_status',
+            //     'battery_operation',
+            //     'battery_charge',
+            //     'battery_watt',
+            //     'grid_power_dir',
+            //     'grid_power',
+            // ]
+            // states.forEach(state => {
+            //     this.setObjectNotExists(state, {
+            //         type: "state",
+            //         common: {
+            //             name: state,
+            //             type: "String",
+            //             role: "variable",
+            //             read: true,
+            //             write: true,
+            //         },
+            //         native: {},
+            //     });
+            // });
             
             this.readContentInterval(5000);
 
@@ -188,12 +188,16 @@ class Template extends utils.Adapter {
                 } catch (e) {
                     gridPower = 'unknown';
                 }
-                this.setState('sma_status', {val: smaStatus.toString(), ack: true});
-                this.setState('battery_operation', {val: batteryOperation.toString(), ack: true});
-                this.setState('battery_charge', {val: batteryCharge.toString(), ack: true});
-                this.setState('battery_watt', {val: batteryWatt.toString(), ack: true});
-                this.setState('grid_power_dir', {val: gridPowerDir.toString(), ack: true});
-                this.setState('grid_power', {val: gridPower.toString(), ack: true});
+                try {
+                    this.setStateAsync('sma_status', {val: smaStatus.toString(), ack: true});
+                    this.setStateAsync('battery_operation', {val: batteryOperation.toString(), ack: true});
+                    this.setStateAsync('battery_charge', {val: batteryCharge.toString(), ack: true});
+                    this.setStateAsync('battery_watt', {val: batteryWatt.toString(), ack: true});
+                    this.setStateAsync('grid_power_dir', {val: gridPowerDir.toString(), ack: true});
+                    this.setStateAsync('grid_power', {val: gridPower.toString(), ack: true});
+                } catch (e) {
+                    this.log.info(`cant set states!`);
+                }
             }
         }, pauseTime);
     }

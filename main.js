@@ -160,37 +160,54 @@ class Template extends utils.Adapter {
                     this.log.info('couldnt find batteryTile');
                     batteryTile = false;
                 }
-                this.log.info(batteryTile != false);
                 try {
                     smaStatus = document.querySelector('#v6180_08214800').textContent;
+                    this.log.info('smaStatus readable');
+                    this.log.info(smaStatus);
                 } catch (e) {
                     smaStatus = 'unknown';
+                    this.log.info('smaStatus NOT readable');
                 }
                 try {
                     batteryOperation = batteryTile.querySelectorAll('tr')[0].querySelectorAll('td')[2].textContent;
+                    this.log.info('batteryOperation readable');
+                    this.log.info(batteryOperation);
                 } catch (e) {
                     batteryOperation = 'unknown';
+                    this.log.info('batteryOperation NOT readable');
                 }
                 try {
                     batteryCharge = (batteryOperation == 'Discharge battery' ? '-' : '') + batteryTile && batteryTile.querySelectorAll('tr')[1].querySelectorAll('td')[1].textContent;
+                    this.log.info('batteryCharge readable');
+                    this.log.info(batteryCharge);
                 } catch (e) {
                     batteryCharge = 'unknown';
+                    this.log.info('batteryCharge NOT readable');
                 }
                 try {
                     batteryWatt = batteryTile.querySelectorAll('tr')[2].querySelectorAll('td')[1].textContent;
+                    this.log.info('batteryWatt readable');
+                    this.log.info(batteryWatt);
                 } catch (e) {
                     batteryWatt = 'unknown';
+                    this.log.info('batteryWatt NOT readable');
                 }
                 try {
                     gridPowerDir = document.querySelector('[src="images/icons/arrowGr.png"]') ? 'Out' : 'unknown';
                     gridPowerDir = document.querySelector('[src="images/icons/arrowRd.png"]') ? 'In' : gridPowerDir;
+                    this.log.info('gridPowerDir readable');
+                    this.log.info(gridPowerDir);
                 } catch (e) {
                     gridPowerDir = 'unknown';
+                    this.log.info('gridPowerDir NOT readable');
                 }
                 try {
                     gridPower = (gridPowerDir == 'Out' ? '-' : '') + document.querySelector('[ng-controller="gridConnectionPointOverview"]').querySelector('.tileValues.ng-binding').textContent;
+                    this.log.info('gridPower readable');
+                    this.log.info(gridPower);
                 } catch (e) {
                     gridPower = 'unknown';
+                    this.log.info('gridPower NOT readable');
                 }
                 try {
                     if(smaStatus != 'unknown') {

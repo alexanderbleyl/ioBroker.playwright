@@ -151,7 +151,12 @@ class Template extends utils.Adapter {
                 let batteryWatt = 'unknown';
                 let gridPowerDir = 'unknown';
                 let gridPower = 'unknown';
-                const batteryTile = document.querySelector('#v6100_00295A00').parentElement.parentElement.parentElement.parentElement.parentElement || false;
+                let batteryTile = false;
+                try {
+                    batteryTile = document.querySelector('#v6100_00295A00').parentElement.parentElement.parentElement.parentElement.parentElement;
+                } catch (e) {
+                    batteryTile = false;
+                }
                 try {
                     smaStatus = document.querySelector('#v6180_08214800').textContent;
                 } catch (e) {

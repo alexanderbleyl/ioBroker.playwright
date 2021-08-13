@@ -57,14 +57,12 @@ class Template extends utils.Adapter {
             await page.goto(this.config.sma_url);
             this.log.info(`called ${this.config.sma_url}`);
             await page.waitForSelector('#password');
+            this.log.info(`password input detected`);
             await page.selectOption('select#user', { label: 'User' });
-            this.log.info(`try entering pwd ${this.config.sma_pass}`);
+            this.log.info(`try entering pwd`);
             await page.fill('input[name="password"]', this.config.sma_pass);
-			// await page.click("[label=Benutzer]");
 			await page.click("#bLogin");
-			await page.waitForTimeout(2000);
-            // content = await page.content();
-            // this.log.info(content);
+			await page.waitForTimeout(5000);
             
             const states = [
                 'sma_status',
@@ -145,24 +143,53 @@ class Template extends utils.Adapter {
         setInterval(async () => {
             content = await page.content();
             const dom = new JSDOM(content);
-            // this.log.info(`dom child length: "${dom.window.document.body.children.length}"`);
-            // this.log.info(`check element: ${dom.window.document.querySelector('#v6100_00295A00')? 'YES' : 'NO'}`);
-            // this.log.info(`check element: ${ dom.window.document.querySelector('#v6100_00295A00').innerHTML}`);
-            // this.log.info(`check element: ${ dom.window.document.querySelector('#v6100_00295A00').textContent}`);
-            const smaStatus = dom.window.document.querySelector('#v6180_08214800') ? dom.window.document.querySelector('#v6180_08214800').textContent : 'unknown';
-            this.setState('sma_status', {val: smaStatus});
-            const batteryTile = dom.window.document.querySelector('#v6100_00295A00').parentElement.parentElement.parentElement.parentElement.parentElement || false;
-            const batteryOperation = batteryTile && batteryTile.querySelectorAll('tr')[0].querySelectorAll('td')[2].textContent || 'unknown';
-            this.setState('battery_operation', {val: batteryOperation});
-            const batteryCharge = (batteryOperation != 'unknown'? (batteryOperation == 'Discharge battery'? '-' : '') : '') + batteryTile && batteryTile.querySelectorAll('tr')[1].querySelectorAll('td')[1].textContent || 'unknown';
-            this.setState('battery_charge', {val: batteryCharge});
-            const batteryWatt = batteryTile && batteryTile.querySelectorAll('tr')[2].querySelectorAll('td')[1].textContent || 'unknown';
-            this.setState('battery_watt', {val: batteryWatt});
-            let gridPowerDir = dom.window.document.querySelector('[src="images/icons/arrowGr.png"]')? 'Out' : 'unknown';
-            gridPowerDir = dom.window.document.querySelector('[src="images/icons/arrowRd.png"]')? 'In' : gridPowerDir;
-            this.setState('grid_power_dir', {val: gridPowerDir});
-            const gridPower = dom.window.document.querySelector('[ng-controller="gridConnectionPointOverview"]') && dom.window.document.querySelector('[ng-controller="gridConnectionPointOverview"]').querySelector('.tileValues.ng-binding')? (gridPowerDir == 'Out'? '-' : '') + dom.window.document.querySelector('[ng-controller="gridConnectionPointOverview"]').querySelector('.tileValues.ng-binding').textContent : 'unknown';
-            this.setState('grid_power', {val: gridPower});
+            if(dom && dom.window && dom.window.document) {
+                const document = dom.window.document;
+                let smaStatus = 'unknown';
+                let batteryOperation = 'unknown';
+                let batteryCharge = 'unknown';
+                let batteryWatt = 'unknown';
+                let gridPowerDir = 'unknown';
+                let gridPower = 'unknown';
+                const batteryTile = document.querySelector('#v6100_00295A00').parentElement.parentElement.parentElement.parentElement.parentElement || false;
+                try {
+                    smaStatus = document.querySelector('#v6180_08214800').textContent;
+                } catch (e) {
+                    smaStatus = 'unknown';
+                }
+                try {
+                    batteryOperation = batteryTile.querySelectorAll('tr')[0].querySelectorAll('td')[2].textContent;
+                } catch (e) {
+                    batteryOperation = 'unknown';
+                }
+                try {
+                    batteryCharge = (batteryOperation == 'Discharge battery' ? '-' : '') + batteryTile && batteryTile.querySelectorAll('tr')[1].querySelectorAll('td')[1].textContent;
+                } catch (e) {
+                    batteryCharge = 'unknown';
+                }
+                try {
+                    batteryWatt = batteryTile.querySelectorAll('tr')[2].querySelectorAll('td')[1].textContent;
+                } catch (e) {
+                    batteryWatt = 'unknown';
+                }
+                try {
+                    gridPowerDir = document.querySelector('[src="images/icons/arrowGr.png"]') ? 'Out' : 'unknown';
+                    gridPowerDir = document.querySelector('[src="images/icons/arrowRd.png"]') ? 'In' : gridPowerDir;
+                } catch (e) {
+                    gridPowerDir = 'unknown';
+                }
+                try {
+                    gridPower = (gridPowerDir == 'Out' ? '-' : '') + document.querySelector('[ng-controller="gridConnectionPointOverview"]').querySelector('.tileValues.ng-binding').textContent;
+                } catch (e) {
+                    gridPower = 'unknown';
+                }
+                this.setState('sma_status', {val: smaStatus});
+                this.setState('battery_operation', {val: batteryOperation});
+                this.setState('battery_charge', {val: batteryCharge});
+                this.setState('battery_watt', {val: batteryWatt});
+                this.setState('grid_power_dir', {val: gridPowerDir});
+                this.setState('grid_power', {val: gridPower});
+            }
         }, pauseTime);
     }
 

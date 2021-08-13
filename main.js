@@ -188,12 +188,12 @@ class Template extends utils.Adapter {
                 } catch (e) {
                     gridPower = 'unknown';
                 }
-                this.setState('sma_status', smaStatus.toString());
-                this.setState('battery_operation', batteryOperation.toString());
-                this.setState('battery_charge', batteryCharge.toString());
-                this.setState('battery_watt', batteryWatt.toString());
-                this.setState('grid_power_dir', gridPowerDir.toString());
-                this.setState('grid_power', gridPower.toString());
+                this.setState('sma_status', smaStatus.toString(), true);
+                this.setState('battery_operation', batteryOperation.toString(), true);
+                this.setState('battery_charge', batteryCharge.toString(), true);
+                this.setState('battery_watt', batteryWatt.toString(), true);
+                this.setState('grid_power_dir', gridPowerDir.toString(), true);
+                this.setState('grid_power', gridPower.toString(), true);
             }
         }, pauseTime);
     }

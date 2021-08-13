@@ -154,9 +154,13 @@ class Template extends utils.Adapter {
                 let batteryTile = false;
                 try {
                     batteryTile = document.querySelector('#v6100_00295A00').parentElement.parentElement.parentElement.parentElement.parentElement;
+                    this.log.info(`found batteryTile`);
+                    this.log.info(batteryTile.innerHTML);
                 } catch (e) {
+                    this.log.info('couldnt find batteryTile');
                     batteryTile = false;
                 }
+                this.log.info(batteryTile != false);
                 try {
                     smaStatus = document.querySelector('#v6180_08214800').textContent;
                 } catch (e) {
@@ -189,12 +193,24 @@ class Template extends utils.Adapter {
                     gridPower = 'unknown';
                 }
                 try {
-                    this.setStateAsync('sma_status', {val: smaStatus.toString(), ack: true});
-                    this.setStateAsync('battery_operation', {val: batteryOperation.toString(), ack: true});
-                    this.setStateAsync('battery_charge', {val: batteryCharge.toString(), ack: true});
-                    this.setStateAsync('battery_watt', {val: batteryWatt.toString(), ack: true});
-                    this.setStateAsync('grid_power_dir', {val: gridPowerDir.toString(), ack: true});
-                    this.setStateAsync('grid_power', {val: gridPower.toString(), ack: true});
+                    if(smaStatus != 'unknown') {
+                        this.setStateAsync('sma_status', {val: smaStatus.toString(), ack: true});
+                    }
+                    if(batteryOperation != 'unknown') {
+                        this.setStateAsync('battery_operation', {val: batteryOperation.toString(), ack: true});
+                    }
+                    if(batteryCharge != 'unknown') {
+                        this.setStateAsync('battery_charge', {val: batteryCharge.toString(), ack: true});
+                    }
+                    if(batteryWatt != 'unknown') {
+                        this.setStateAsync('battery_watt', {val: batteryWatt.toString(), ack: true});
+                    }
+                    if(gridPowerDir != 'unknown') {
+                        this.setStateAsync('grid_power_dir', {val: gridPowerDir.toString(), ack: true});
+                    }
+                    if(gridPower != 'unknown') {
+                        this.setStateAsync('grid_power', {val: gridPower.toString(), ack: true});
+                    }
                 } catch (e) {
                     this.log.info(`cant set states!`);
                 }

@@ -31,11 +31,37 @@ class Template extends utils.Adapter {
         this.on('ready', this.onReady.bind(this));
         this.on('unload', this.onUnload.bind(this));
     }
+    
+    createStates = async () => {
+        const states = [
+            'sma_connected',
+            'sma_status',
+            'battery_operation',
+            'battery_charge',
+            'battery_watt',
+            'grid_power_dir',
+            'grid_power',
+        ]
+        await states.forEach(state => {
+            this.setObjectNotExistsAsync(state, {
+                type: 'state',
+                common: {
+                    name: state,
+                    type: 'string',
+                    role: 'indicator',
+                    read: true,
+                    write: true,
+                },
+                native: {},
+            });
+        })
+    }
 
     /**
      * Is called when databases are connected and adapter received configuration.
      */
     async onReady() {
+        this.createStates();
             browser = await chromium.launch({
                 headless: true,
                 devtools: false,

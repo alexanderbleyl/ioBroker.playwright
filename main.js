@@ -14,7 +14,7 @@ const { chromium } = require('playwright');
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 
-let browser;
+let browser = false;
 let context;
 let pageSunnyIsland;
 let pageSunnyTripower;
@@ -31,7 +31,6 @@ class Template extends utils.Adapter {
             name: 'pupeteer_sma',
         });
         
-        this.on('ready', this.openBrowser.bind(this));
         this.on('ready', this.openPageSunnyIsland.bind(this));
         this.on('ready', this.openPageSunnyTripower.bind(this));
         this.on('unload', this.onUnload.bind(this));
@@ -86,6 +85,9 @@ class Template extends utils.Adapter {
         if(!this.config.url_sunny_island) {
             return;
         }
+        if(!browser) {
+            await this.openBrowser();
+        }
         pageSunnyIsland = await context.newPage();
         this.log.info(`opened pageSunnyIsland`);
         await pageSunnyIsland.goto(this.config.url_sunny_island);
@@ -107,6 +109,9 @@ class Template extends utils.Adapter {
     async openPageSunnyTripower() {
         if(!this.config.url_sunny_tripower) {
             return;
+        }
+        if(!browser) {
+            await this.openBrowser();
         }
         pageSunnyTripower = await context.newPage();
         this.log.info(`opened pageSunnyTripower`);

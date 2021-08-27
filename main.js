@@ -9,7 +9,6 @@
 const utils = require('@iobroker/adapter-core');
 
 // Load your modules here, e.g.:
-// const fs = require("fs");
 const { chromium } = require('playwright');
 
 const jsdom = require("jsdom");
@@ -30,9 +29,6 @@ class Template extends utils.Adapter {
             name: 'pupeteer_sma',
         });
         this.on('ready', this.onReady.bind(this));
-        // this.on('stateChange', this.onStateChange.bind(this));
-        // this.on('objectChange', this.onObjectChange.bind(this));
-        // this.on('message', this.onMessage.bind(this));
         this.on('unload', this.onUnload.bind(this));
     }
 
@@ -46,7 +42,6 @@ class Template extends utils.Adapter {
                 executablePath: '/usr/bin/chromium-browser',
                 args: [
                     "--enable-features=NetworkService",
-                    // "--no-sandbox",
                     "--disable-dev-shm-usage"
                 ],
             });
@@ -61,82 +56,13 @@ class Template extends utils.Adapter {
             await page.selectOption('select#user', { label: 'User' });
             this.log.info(`try entering pwd`);
             await page.fill('input[name="password"]', this.config.sma_pass);
+            await page.waitForSelector('#bLogin');
 			await page.click("#bLogin");
-			await page.waitForTimeout(5000);
-            
-            // const states = [
-            //     'sma_status',
-            //     'battery_operation',
-            //     'battery_charge',
-            //     'battery_watt',
-            //     'grid_power_dir',
-            //     'grid_power',
-            // ]
-            // states.forEach(state => {
-            //     this.setObjectNotExists(state, {
-            //         type: "state",
-            //         common: {
-            //             name: state,
-            //             type: "String",
-            //             role: "variable",
-            //             read: true,
-            //             write: true,
-            //         },
-            //         native: {},
-            //     });
-            // });
-            
+			await page.waitForTimeout(25000);
             this.readContentInterval(5000);
-
-        /*
-        For every state in the system there has to be also an object of type state
-        Here a simple template for a boolean variable named "testVariable"
-        Because every adapter instance uses its own unique namespace variable names can't collide with other adapters variables
-        */
-        /*
-        await this.setObjectNotExistsAsync('testVariable', {
-            type: 'state',
-            common: {
-                name: 'testVariable',
-                type: 'boolean',
-                role: 'indicator',
-                read: true,
-                write: true,
-            },
-            native: {},
-        });
-        */
-
-        // In order to get state updates, you need to subscribe to them. The following line adds a subscription for our variable we have created above.
-        // You can also add a subscription for multiple states. The following line watches all states starting with "lights."
-        // this.subscribeStates('lights.*');
-        // Or, if you really must, you can also watch all states. Don't do this if you don't need to. Otherwise this will cause a lot of unnecessary load on the system:
-        // this.subscribeStates('*');
-
-        /*
-            setState examples
-            you will notice that each setState will cause the stateChange event to fire (because of above subscribeStates cmd)
-        */
-        /*
-        // the variable testVariable is set to true as command (ack=false)
-        await this.setStateAsync('testVariable', true);
-
-        // same thing, but the value is flagged "ack"
-        // ack should be always set to true if the value is received from or acknowledged from the target system
-        await this.setStateAsync('testVariable', { val: true, ack: true });
-
-        // same thing, but the state is deleted after 30s (getState will return null afterwards)
-        await this.setStateAsync('testVariable', { val: true, ack: true, expire: 30 });
-        */
-
-        // examples for the checkPassword/checkGroup functions
-        /*
-        let result = await this.checkPasswordAsync('admin', 'iobroker');
-        this.log.info('check user admin pw iobroker: ' + result);
-
-        result = await this.checkGroupAsync('admin', 'admin');
-        this.log.info('check group user admin group admin: ' + result);
-        */
+            setInterval(async() => {
+                await page.reload();
+            }, 1000 * 60 * 30); //30mins
     }
     
     readContentInterval = (pauseTime) => {
@@ -144,93 +70,39 @@ class Template extends utils.Adapter {
             content = await page.content();
             const dom = new JSDOM(content);
             if(dom && dom.window && dom.window.document) {
+                this.setStateAsync('sma_connected', {val: 'true', ack: true});
                 const document = dom.window.document;
-                let smaStatus = 'unknown';
-                let batteryOperation = 'unknown';
-                let batteryCharge = 'unknown';
-                let batteryWatt = 'unknown';
+                let batteryTile = document.querySelector('#v6100_00295A00') ?
+                    document.querySelector('#v6100_00295A00').parentElement.parentElement.parentElement.parentElement.parentElement
+                    : false;
+                let smaStatus = document.querySelector('#v6180_08214800') ?
+                    document.querySelector('#v6180_08214800').textContent
+                    : 'unknown';
+                let batteryOperation = batteryTile && batteryTile.querySelectorAll('tr') ?
+                    batteryTile.querySelectorAll('tr')[0].querySelectorAll('td')[2].textContent
+                    : 'unknown';
+                let batteryCharge = batteryTile && batteryTile.querySelectorAll('tr') ?
+                    (batteryOperation == 'Discharge battery' ? '-' : '') + batteryTile && batteryTile.querySelectorAll('tr')[1].querySelectorAll('td')[1].textContent
+                    : 'unknown';
+                let batteryWatt = batteryTile && batteryTile.querySelectorAll('tr') ?
+                    batteryTile.querySelectorAll('tr')[2].querySelectorAll('td')[1].textContent
+                    : 'unknown';
                 let gridPowerDir = 'unknown';
-                let gridPower = 'unknown';
-                let batteryTile = false;
-                try {
-                    batteryTile = document.querySelector('#v6100_00295A00').parentElement.parentElement.parentElement.parentElement.parentElement;
-                    this.log.info(`found batteryTile`);
-                    this.log.info(batteryTile.innerHTML);
-                } catch (e) {
-                    this.log.info('couldnt find batteryTile');
-                    batteryTile = false;
-                }
-                try {
-                    smaStatus = document.querySelector('#v6180_08214800').textContent;
-                    this.log.info('smaStatus readable');
-                    this.log.info(smaStatus);
-                } catch (e) {
-                    smaStatus = 'unknown';
-                    this.log.info('smaStatus NOT readable');
-                }
-                try {
-                    batteryOperation = batteryTile.querySelectorAll('tr')[0].querySelectorAll('td')[2].textContent;
-                    this.log.info('batteryOperation readable');
-                    this.log.info(batteryOperation);
-                } catch (e) {
-                    batteryOperation = 'unknown';
-                    this.log.info('batteryOperation NOT readable');
-                }
-                try {
-                    batteryCharge = (batteryOperation == 'Discharge battery' ? '-' : '') + batteryTile && batteryTile.querySelectorAll('tr')[1].querySelectorAll('td')[1].textContent;
-                    this.log.info('batteryCharge readable');
-                    this.log.info(batteryCharge);
-                } catch (e) {
-                    batteryCharge = 'unknown';
-                    this.log.info('batteryCharge NOT readable');
-                }
-                try {
-                    batteryWatt = batteryTile.querySelectorAll('tr')[2].querySelectorAll('td')[1].textContent;
-                    this.log.info('batteryWatt readable');
-                    this.log.info(batteryWatt);
-                } catch (e) {
-                    batteryWatt = 'unknown';
-                    this.log.info('batteryWatt NOT readable');
-                }
                 try {
                     gridPowerDir = document.querySelector('[src="images/icons/arrowGr.png"]') ? 'Out' : 'unknown';
                     gridPowerDir = document.querySelector('[src="images/icons/arrowRd.png"]') ? 'In' : gridPowerDir;
-                    this.log.info('gridPowerDir readable');
-                    this.log.info(gridPowerDir);
                 } catch (e) {
                     gridPowerDir = 'unknown';
-                    this.log.info('gridPowerDir NOT readable');
                 }
-                try {
-                    gridPower = (gridPowerDir == 'Out' ? '-' : '') + document.querySelector('[ng-controller="gridConnectionPointOverview"]').querySelector('.tileValues.ng-binding').textContent;
-                    this.log.info('gridPower readable');
-                    this.log.info(gridPower);
-                } catch (e) {
-                    gridPower = 'unknown';
-                    this.log.info('gridPower NOT readable');
-                }
-                try {
-                    if(smaStatus != 'unknown') {
-                        this.setStateAsync('sma_status', {val: smaStatus.toString(), ack: true});
-                    }
-                    if(batteryOperation != 'unknown') {
-                        this.setStateAsync('battery_operation', {val: batteryOperation.toString(), ack: true});
-                    }
-                    if(batteryCharge != 'unknown') {
-                        this.setStateAsync('battery_charge', {val: batteryCharge.toString(), ack: true});
-                    }
-                    if(batteryWatt != 'unknown') {
-                        this.setStateAsync('battery_watt', {val: batteryWatt.toString(), ack: true});
-                    }
-                    if(gridPowerDir != 'unknown') {
-                        this.setStateAsync('grid_power_dir', {val: gridPowerDir.toString(), ack: true});
-                    }
-                    if(gridPower != 'unknown') {
-                        this.setStateAsync('grid_power', {val: gridPower.toString(), ack: true});
-                    }
-                } catch (e) {
-                    this.log.info(`cant set states!`);
-                }
+                let gridPower = document.querySelector('[ng-controller="gridConnectionPointOverview"]') ?
+                    (gridPowerDir == 'Out' ? '-' : '') + document.querySelector('[ng-controller="gridConnectionPointOverview"]').querySelector('.tileValues.ng-binding').textContent
+                    : 'unknown';
+                smaStatus != 'unknown' && this.setStateAsync('sma_status', {val: smaStatus.toString(), ack: true});
+                batteryOperation != 'unknown' && this.setStateAsync('battery_operation', {val: batteryOperation.toString(), ack: true});
+                batteryCharge != 'unknown' && this.setStateAsync('battery_charge', {val: batteryCharge.toString(), ack: true});
+                batteryWatt != 'unknown' && this.setStateAsync('battery_watt', {val: batteryWatt.toString(), ack: true});
+                gridPowerDir != 'unknown' && this.setStateAsync('grid_power_dir', {val: gridPowerDir.toString(), ack: true});
+                gridPower != 'unknown' && this.setStateAsync('grid_power', {val: gridPower.toString(), ack: true});
             }
         }, pauseTime);
     }
@@ -241,77 +113,16 @@ class Template extends utils.Adapter {
      */
     onUnload(callback) {
         try {
-            // Here you must clear all timeouts or intervals that may still be active
-            // clearTimeout(timeout1);
-            // clearTimeout(timeout2);
-            // ...
-            // clearInterval(interval1);
-    
             page.click("#lLogoutLogin");
             page.waitForTimeout(2000);
             browser.close();
+            this.setStateAsync('sma_connected', {val: 'false', ack: true});
             callback();
         } catch (e) {
+            this.setStateAsync('sma_connected', {val: 'false', ack: true});
             callback();
         }
     }
-
-    // If you need to react to object changes, uncomment the following block and the corresponding line in the constructor.
-    // You also need to subscribe to the objects with `this.subscribeObjects`, similar to `this.subscribeStates`.
-    // /**
-    //  * Is called if a subscribed object changes
-    //  * @param {string} id
-    //  * @param {ioBroker.Object | null | undefined} obj
-    //  */
-    // onObjectChange(id, obj) {
-    //     if (obj) {
-    //         // The object was changed
-    //         this.log.info(`object ${id} changed: ${JSON.stringify(obj)}`);
-    //     } else {
-    //         // The object was deleted
-    //         this.log.info(`object ${id} deleted`);
-    //     }
-    // }
-
-    /**
-     * Is called if a subscribed state changes
-     * @param {string} id
-     * @param {ioBroker.State | null | undefined} state
-     */
-    // onStateChange(id, state) {
-    //     if (state) {
-    //         // The state was changed
-    //         this.log.info(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
-    //         try {
-    //             this.log.info(`send message to Discord "${state.val}"`);
-    //             //Do something when a state changes
-    //         } catch (e) {
-    //             this.log.info(`could not send message "${state.val}"`);
-    //         }
-    //     } else {
-    //         // The state was deleted
-    //         this.log.info(`state ${id} deleted`);
-    //     }
-    // }
-
-    // If you need to accept messages in your adapter, uncomment the following block and the corresponding line in the constructor.
-    // /**
-    //  * Some message was sent to this instance over message box. Used by email, pushover, text2speech, ...
-    //  * Using this method requires "common.messagebox" property to be set to true in io-package.json
-    //  * @param {ioBroker.Message} obj
-    //  */
-    // onMessage(obj) {
-    //     if (typeof obj === 'object' && obj.message) {
-    //         if (obj.command === 'send') {
-    //             // e.g. send email or pushover or whatever
-    //             this.log.info('send command');
-
-    //             // Send response in callback if required
-    //             if (obj.callback) this.sendTo(obj.from, obj.command, 'Message received', obj.callback);
-    //         }
-    //     }
-    // }
-
 }
 
 if (require.main !== module) {

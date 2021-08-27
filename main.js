@@ -30,7 +30,10 @@ class Template extends utils.Adapter {
             ...options,
             name: 'pupeteer_sma',
         });
-        this.on('ready', this.onReady.bind(this));
+        
+        this.on('ready', this.openBrowser.bind(this));
+        this.on('ready', this.openPageSunnyIsland.bind(this));
+        this.on('ready', this.openPageSunnyTripower.bind(this));
         this.on('unload', this.onUnload.bind(this));
     }
     
@@ -64,21 +67,19 @@ class Template extends utils.Adapter {
     /**
      * Is called when databases are connected and adapter received configuration.
      */
-    async onReady() {
+    async openBrowser() {
         this.createStates();
-            browser = await chromium.launch({
-                headless: true,
-                devtools: false,
-                executablePath: '/usr/bin/chromium-browser',
-                args: [
-                    "--enable-features=NetworkService",
-                    "--disable-dev-shm-usage"
-                ],
-            });
-            this.log.info(`opened browser`);
-            context = await browser.newContext();
-            await this.openPageSunnyIsland();
-            await this.openPageSunnyTripower();
+        browser = await chromium.launch({
+            headless: true,
+            devtools: false,
+            executablePath: '/usr/bin/chromium-browser',
+            args: [
+                "--enable-features=NetworkService",
+                "--disable-dev-shm-usage"
+            ],
+        });
+        this.log.info(`opened browser`);
+        context = await browser.newContext();
     }
     
     async openPageSunnyIsland() {

@@ -78,7 +78,7 @@ class Template extends utils.Adapter {
             ],
         });
         this.log.info(`opened browser`);
-        context = await browser.newContext();
+        context = await browser.newContext({ ignoreHTTPSErrors: true });
     }
     
     async openPageSunnyIsland() {

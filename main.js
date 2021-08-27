@@ -31,7 +31,7 @@ class Template extends utils.Adapter {
             name: 'pupeteer_sma',
         });
         
-        this.on('ready', this.openPageSunnyIsland.bind(this));
+        this.on('ready', this.openPageSunnyIsland.bind(this) && this.openPageSunnyTripower.bind(this));
         // this.on('ready', this.openPageSunnyTripower.bind(this));
         this.on('unload', this.onUnload.bind(this));
     }

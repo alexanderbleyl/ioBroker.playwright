@@ -32,7 +32,7 @@ class Template extends utils.Adapter {
         });
         
         this.on('ready', this.openPageSunnyIsland.bind(this));
-        this.on('ready', this.openPageSunnyTripower.bind(this));
+        // this.on('ready', this.openPageSunnyTripower.bind(this));
         this.on('unload', this.onUnload.bind(this));
     }
     

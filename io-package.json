@@ -79,7 +79,8 @@
     },
     "native": {
         "sma_pass": "",
-        "sma_url": ""
+        "url_sunny_island": ""
+        "url_sunny_tripower": ""
     },
     "objects": [],
     "instanceObjects": []

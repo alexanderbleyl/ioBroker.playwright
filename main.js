@@ -128,6 +128,7 @@ class Template extends utils.Adapter {
         await pageSunnyTripower.waitForTimeout(25000);
         this.readPageSunnyTripowerInterval(5000);
         setInterval(async() => {
+            this.log.info('reload SunnyTripower Page');
             await pageSunnyTripower.reload();
         }, 1000 * 60 * 30); //30mins
     }
@@ -194,6 +195,7 @@ class Template extends utils.Adapter {
      * @param {() => void} callback
      */
     onUnload(callback) {
+        this.log.info('onUnload');
         this.setStateAsync('sma_sunny_island_connected', {val: 'false', ack: true});
         this.setStateAsync('sma_sunny_tripower_connected', {val: 'false', ack: true});
         callback();

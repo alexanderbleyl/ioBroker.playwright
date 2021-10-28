@@ -102,6 +102,7 @@ class Template extends utils.Adapter {
         await pageSunnyIsland.waitForTimeout(25000);
         this.readPageSunnyIslandInterval(5000);
         setInterval(async() => {
+            this.log.info('reload SunnyIsland Page');
             await pageSunnyIsland.reload();
         }, 1000 * 60 * 30); //30mins
     }

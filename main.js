@@ -111,10 +111,8 @@ async function doTask(page, pageName, task) {
                     const document = dom.window.document;
                     let domElementContent = task.fallback;
                     if(document.querySelector(task.selector)) {
-                        adapter.log.info(`found Element: ${JSON.stringify(document.querySelector(task.selector))}`);
                         domElementContent = document.querySelector(task.selector).textContent;
                     }
-                    adapter.log.info(`save as state: ${domElementContent}`);
                     adapter.setStateAsync(pageName + '.' + task.__state__, {
                         val: domElementContent.toString(),
                         ack: true

@@ -35,31 +35,39 @@ let testSetting = {
             },
             3: {
                 "action": "fill",
-                "selector": "input[name=\"password\"]",
+                "selector": "input[name='password']",
                 "value": ""
             },
             4: {
-                "action": "click",
+                "action": "waitForSelector",
                 "selector": "#bLogin"
             },
             5: {
+                "action": "click",
+                "selector": "#bLogin"
+            },
+            6: {
                 "action": "waitForTimeout",
                 "time_ms": "25000"
             },
-            6: {
+            7: {
+                "action": "readElementToState",
+                "__state__": "battery_charge",
+                "selector": "#v6180_08214800",
+                "fallback": "unknown"
+            },
+            8: {
                 "action": "readInterval",
-                "time_ms": "5000",
-                "setting": {
-                    "options": {
-                        "setOnSuccess__state__": "sma_sunny_island_connected"
-                    },
-                    "tasks": {
-                        0: {
-                            "action": "readElementToState",
-                            "__state__": "battery_charge",
-                            "selector": "#v6180_08214800",
-                            "fallback": "unknown"
-                        }
+                "options": {
+                    "time_ms": "5000",
+                    "setOnSuccess__state__": "sma_sunny_island_connected"
+                },
+                "tasks": {
+                    0: {
+                        "action": "readElementToState",
+                        "__state__": "battery_charge",
+                        "selector": "#v6180_08214800",
+                        "fallback": "unknown"
                     }
                 }
             }
@@ -124,11 +132,64 @@ async function readPages(setting) {
             }, parseInt(pageSetting.options.reloadPageInterval_sec) * 1000); //30mins
         }
         
-        for (const task of Object.values(pageSetting)) {
-                adapter.log.info(`do task ${JSON.stringify(task)}`);
+        for (const task of Object.values(pageSetting.tasks)) {
+            adapter.log.info(`do task ${JSON.stringify(task)}`);
+            if(task.action === 'readInterval') {
+                        setInterval(async () => {
+                            for (const intervalTask of Object.values(task.tasks)) {
+                                await doTask(page, intervalTask);
+                            }
+                        }, task.options.time_ms);
+            }
+            await doTask(page, task);
         }
         
         adapter.log.info(`readPage ${pageName} with setting: ${JSON.stringify(pageSetting)}`);
+    }
+}
+
+async function doTask(page, task) {
+    
+    adapter.log.info(`do Task: ${JSON.stringify(task)}`);
+    
+    if(task.options && task.options.setOnSuccess__state__) {
+        adapter.setStateAsync(task.options.setOnSuccess__state__, {val: 'true', ack: true});
+    }
+    
+    switch (task.action) {
+        case "goto":
+            await page.goto(task.url);
+            break;
+        case "waitForSelector":
+            await page.waitForSelector(task.selector);
+            break;
+        case "selectOption":
+            await page.selectOption(task.selector, { label: task.select_labeled });
+            break;
+        case "fill":
+            await page.selectOption(task.selector, { label: task.value });
+            break;
+        case "click":
+            await page.click(task.selector);
+            break;
+        case "waitForTimeout":
+            await page.waitForTimeout(task.time_ms);
+            break;
+        case "readInterval":
+            await page.waitForTimeout(task.time_ms);
+            break;
+        case "readElementToState":
+            const content = await page.content();
+            const dom = new JSDOM(content);
+            if(dom && dom.window && dom.window.document) {
+                const document = dom.window.document;
+                let domElementContent = document.querySelector(task.selector) ? document.querySelector(task.selector).textContent : task.fallback;
+                adapter.setStateAsync(task.__state__, {
+                    val: domElementContent.toString(),
+                    ack: true
+                });
+            }
+            break;
     }
 }
 

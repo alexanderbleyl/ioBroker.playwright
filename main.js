@@ -84,7 +84,7 @@ function main() {
     }
     setSubscribers(testSetting);
     if(!browser) {
-        openBrowser(() => readPages(testSetting));
+        openBrowser().then(() => readPages(testSetting));
     }
 }
 
@@ -117,7 +117,7 @@ function readPages(setting) {
     }
 }
 
-async function openBrowser(cb) {
+async function openBrowser() {
     browser = await chromium.launch({
         headless: true,
         devtools: false,
@@ -129,7 +129,6 @@ async function openBrowser(cb) {
     });
     adapter.log.info(`opened browser`);
     context = await browser.newContext({ ignoreHTTPSErrors: true });
-    cb();
 }
 
 function flattenObject(ob) {

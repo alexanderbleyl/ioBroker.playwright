@@ -21,7 +21,8 @@
   "dependencies": {
     "@iobroker/adapter-core": "^2.5.0",
     "jsdom": "16.7.0",
-    "playwright": "1.13.1"
+    "playwright": "1.13.1",
+    "atob": "2.1.2"
   },
   "main": "main.js",
   "readmeFilename": "README.md"

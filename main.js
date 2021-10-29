@@ -2,7 +2,8 @@
 
 const utils = require('@iobroker/adapter-core');
 const { chromium } = require('playwright');
-const { JSDOM } = require("jsdom");
+const { JSDOM } = require('jsdom');
+const atob = require('atob');
 
 /**
  * The adapter instance

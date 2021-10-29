@@ -108,14 +108,12 @@ async function doTask(page, pageName, task) {
                 const content = await page.content();
                 const dom = new JSDOM(content);
                 if(dom && dom.window && dom.window.document) {
-                adapter.log.info(`documents title: ${dom.window.document.title}`);
-                //     const document = dom.window.document;
-                //     adapter.log.warn(`task with selector '${task.selector}' found`);
-                //     // let domElementContent = document.querySelector(task.selector) ? document.querySelector(task.selector).textContent : task.fallback;
-                //     // adapter.setStateAsync(pageName + '.' + task.__state__, {
-                //     //     val: domElementContent.toString(),
-                //     //     ack: true
-                //     // });
+                    const document = dom.window.document;
+                    let domElementContent = document.querySelector(task.selector) ? document.querySelector(task.selector).textContent : task.fallback;
+                    adapter.setStateAsync(pageName + '.' + task.__state__, {
+                        val: domElementContent.toString(),
+                        ack: true
+                    });
                 }
                 break;
         }

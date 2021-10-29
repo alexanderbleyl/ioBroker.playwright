@@ -1,13 +1,19 @@
 {
-  "name": "iobroker.pupeteer_sma",
-  "version": "0.0.1",
-  "description": "Use Pupeteer to get SMA Data from own LAN",
+  "name": "iobroker.playwright",
+  "version": "0.0.2",
+  "description": "Use Playwright to read webpages",
   "author": {
     "name": "Author",
-    "email": "author@mail.com"
+    "email": "bleyl.alexander@web.de"
   },
-  "homepage": "https://github.com/alexanderbleyl/ioBroker.pupeteer_sma",
+  "homepage": "https://github.com/alexanderbleyl/ioBroker.playwright",
   "license": "MIT",
+  "keywords": [
+    "ioBroker",
+    "Playwright",
+    "Smart Home",
+    "home automation"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/alexanderbleyl/ioBroker.pupeteer_sma"
@@ -17,5 +23,6 @@
     "jsdom": "16.7.0",
     "playwright": "1.13.1"
   },
-  "main": "main.js"
+  "main": "main.js",
+  "readmeFilename": "README.md"
 }

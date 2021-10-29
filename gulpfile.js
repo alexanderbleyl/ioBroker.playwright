@@ -14,15 +14,7 @@ const EMPTY = '';
 const translate = require('./lib/tools').translateText;
 const languages = {
     en: {},
-    de: {},
-    ru: {},
-    pt: {},
-    nl: {},
-    fr: {},
-    it: {},
-    es: {},
-    pl: {},
-    'zh-cn': {}
+    de: {}
 };
 
 function lang2data(lang) {
@@ -52,9 +44,9 @@ function readWordJs(src) {
         }
         words = words.substring(words.indexOf('{'), words.length);
         words = words.substring(0, words.lastIndexOf(';'));
-
+        
         const resultFunc = new Function('return ' + words + ';');
-
+        
         return resultFunc();
     } catch (e) {
         return null;
@@ -128,7 +120,7 @@ function words2languages(src) {
             if (!fs.existsSync(src + 'i18n/' + l)) {
                 fs.mkdirSync(src + 'i18n/' + l);
             }
-
+            
             fs.writeFileSync(src + 'i18n/' + l + '/translations.json', lang2data(obj));
         }
     } else {
@@ -179,7 +171,7 @@ function languages2words(src) {
     }
     // read actual words.js
     const aWords = readWordJs();
-
+    
     const temporaryIgnore = ['flat.txt'];
     if (aWords) {
         // Merge words together
@@ -198,9 +190,9 @@ function languages2words(src) {
                 });
             }
         }
-
+        
     }
-
+    
     writeWordJs(bigOne, src);
 }
 
@@ -209,7 +201,7 @@ async function translateNotExisting(obj, baseText, yandex) {
     if (!t) {
         t = baseText;
     }
-
+    
     if (t) {
         for (let l in languages) {
             if (!obj[l]) {
@@ -239,18 +231,10 @@ gulp.task('updatePackages', function (done) {
     if (!iopackage.common.news[pkg.version]) {
         const news = iopackage.common.news;
         const newNews = {};
-
+        
         newNews[pkg.version] = {
             en: 'news',
-            de: 'neues',
-            ru: 'новое',
-            pt: 'novidades',
-            nl: 'nieuws',
-            fr: 'nouvelles',
-            it: 'notizie',
-            es: 'noticias',
-            pl: 'nowości',
-            'zh-cn': '新'
+            de: 'neues'
         };
         iopackage.common.news = Object.assign(newNews, news);
     }
@@ -264,18 +248,18 @@ gulp.task('updateReadme', function (done) {
     if (pos !== -1) {
         const readmeStart = readme.substring(0, pos + '## Changelog\n'.length);
         const readmeEnd = readme.substring(pos + '## Changelog\n'.length);
-
+        
         if (readme.indexOf(version) === -1) {
             const timestamp = new Date();
             const date = timestamp.getFullYear() + '-' +
-                    ('0' + (timestamp.getMonth() + 1).toString(10)).slice(-2) + '-' +
-                    ('0' + (timestamp.getDate()).toString(10)).slice(-2);
-
+                ('0' + (timestamp.getMonth() + 1).toString(10)).slice(-2) + '-' +
+                ('0' + (timestamp.getDate()).toString(10)).slice(-2);
+            
             let news = '';
             if (iopackage.common.news && iopackage.common.news[pkg.version]) {
                 news += '* ' + iopackage.common.news[pkg.version].en;
             }
-
+            
             fs.writeFileSync('README.md', readmeStart + '### ' + version + ' (' + date + ')\n' + (news ? news + '\n\n' : '\n') + readmeEnd);
         }
     }
@@ -283,13 +267,13 @@ gulp.task('updateReadme', function (done) {
 });
 
 gulp.task('translate', async function (done) {
-
+    
     let yandex;
     const i = process.argv.indexOf('--yandex');
     if (i > -1) {
         yandex = process.argv[i + 1];
     }
-
+    
     if (iopackage && iopackage.common) {
         if (iopackage.common.news) {
             console.log('Translate News');
@@ -307,7 +291,7 @@ gulp.task('translate', async function (done) {
             console.log('Translate Description');
             await translateNotExisting(iopackage.common.desc, null, yandex);
         }
-
+        
         if (fs.existsSync('./admin/i18n/en/translations.json')) {
             let enTranslations = require('./admin/i18n/en/translations.json');
             for (let l in languages) {
@@ -327,7 +311,7 @@ gulp.task('translate', async function (done) {
                 fs.writeFileSync('./admin/i18n/' + l + '/translations.json', JSON.stringify(existing, null, 4));
             }
         }
-
+        
     }
     fs.writeFileSync('io-package.json', JSON.stringify(iopackage, null, 4));
 });

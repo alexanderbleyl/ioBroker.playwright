@@ -86,21 +86,22 @@ function main() {
 }
 
 function setSubscribers(setting) {
+    adapter.log.info(`subscribe to state: ${JSON.stringify(flattenObject(setting))}`);
     for (const [key, state] of Object.entries(flattenObject(setting))) {
-        if(key.indexOf('.state')) {
+        if(key.indexOf('.state') > 0) {
             adapter.log.info(`subscribe to state: ${state}`);
-            adapter.setObjectNotExistsAsync(state, {
-                type: 'state',
-                common: {
-                    name: state,
-                    type: 'string',
-                    role: 'indicator',
-                    read: true,
-                    write: true,
-                },
-                native: {},
-            });
-            adapter.subscribeStates(state);
+            // adapter.setObjectNotExistsAsync(state, {
+            //     type: 'state',
+            //     common: {
+            //         name: state,
+            //         type: 'string',
+            //         role: 'indicator',
+            //         read: true,
+            //         write: true,
+            //     },
+            //     native: {},
+            // });
+            // adapter.subscribeStates(state);
         }
     }
 }

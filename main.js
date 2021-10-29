@@ -12,8 +12,6 @@ let adapter;
 
 let browser = false;
 let context;
-let pageSunnyIsland;
-let pageSunnyTripower;
 let content;
 
 let testSetting = {
@@ -21,44 +19,48 @@ let testSetting = {
         "options": {
             "reloadPageInterval_sec": "1800"
         },
-        0: {
-            "action": "goto",
-            "url": "www.example.com"
-        },
-        1: {
-            "action": "waitForSelector",
-            "selector": "#password"
-        },
-        2: {
-            "action": "selectOption",
-            "selector": "select#user",
-            "select_labeled": "User"
-        },
-        3: {
-            "action": "fill",
-            "selector": "input[name=\"password\"]",
-            "value": ""
-        },
-        4: {
-            "action": "click",
-            "selector": "#bLogin"
-        },
-        5: {
-            "action": "waitForTimeout",
-            "time_ms": "25000"
-        },
-        6: {
-            "action": "readInterval",
-            "time_ms": "5000",
-            "setting": {
-                "options": {
-                    "setOnSuccess__state__": "sma_sunny_island_connected"
-                },
-                0: {
-                    "action": "readElementToState",
-                    "__state__": "battery_charge",
-                    "selector": "#v6180_08214800",
-                    "fallback": "unknown"
+        "tasks": {
+            0: {
+                "action": "goto",
+                "url": "www.example.com"
+            },
+            1: {
+                "action": "waitForSelector",
+                "selector": "#password"
+            },
+            2: {
+                "action": "selectOption",
+                "selector": "select#user",
+                "select_labeled": "User"
+            },
+            3: {
+                "action": "fill",
+                "selector": "input[name=\"password\"]",
+                "value": ""
+            },
+            4: {
+                "action": "click",
+                "selector": "#bLogin"
+            },
+            5: {
+                "action": "waitForTimeout",
+                "time_ms": "25000"
+            },
+            6: {
+                "action": "readInterval",
+                "time_ms": "5000",
+                "setting": {
+                    "options": {
+                        "setOnSuccess__state__": "sma_sunny_island_connected"
+                    },
+                    "tasks": {
+                        0: {
+                            "action": "readElementToState",
+                            "__state__": "battery_charge",
+                            "selector": "#v6180_08214800",
+                            "fallback": "unknown"
+                        }
+                    }
                 }
             }
         }
@@ -111,8 +113,21 @@ function setSubscribers(setting) {
     }
 }
 
-function readPages(setting) {
+async function readPages(setting) {
     for (const [pageName, pageSetting] of Object.entries(setting)) {
+        const page = await context.newPage();
+        if(pageSetting.options && pageSetting.options.reloadPageInterval_sec) {
+            adapter.log.info(`reload page '${pageName}' every ${pageSetting.options.reloadPageInterval_sec}s`);
+            setInterval(async() => {
+                adapter.log.info(`reload page ${pageName}`);
+                await page.reload();
+            }, parseInt(pageSetting.options.reloadPageInterval_sec) * 1000); //30mins
+        }
+        
+        for (const task of Object.values(pageSetting)) {
+                adapter.log.info(`do task ${JSON.stringify(task)}`);
+        }
+        
         adapter.log.info(`readPage ${pageName} with setting: ${JSON.stringify(pageSetting)}`);
     }
 }

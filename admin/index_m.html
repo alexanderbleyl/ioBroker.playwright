@@ -26,7 +26,7 @@
                     $key.prop('checked', settings[id]).on('change', () => onChange());
                 } else {
                     // do not call onChange direct, because onChange could expect some arguments
-                    $key.val(settings[id]).on('change', () => onChange()).on('keyup', () => onChange());
+                    $key.val(atob(settings[id])).on('change', () => onChange()).on('keyup', () => onChange());
                 }
             });
             onChange(false);

@@ -69,12 +69,13 @@ async function readPages(setting) {
             }, parseInt(pageSetting.options.reloadPageInterval_sec) * 1000); //30mins
         }
         
-        for (const task of Object.values(pageSetting.tasks)) {
+        for (let i = 0; i < Object.keys(pageSetting.tasks).length; i++) {
+            const task = pageSetting.tasks[i];
             adapter.log.info(`do task ${JSON.stringify(task)}`);
             if(task.action === 'readInterval') {
                         setInterval(async () => {
-                            for (const intervalTask of Object.values(task.tasks)) {
-                                await doTask(page, intervalTask);
+                            for (let j = 0; j < Object.keys(task.tasks).length; j++) {
+                                await doTask(page, task.tasks[j]);
                             }
                         }, task.options.time_ms);
             }

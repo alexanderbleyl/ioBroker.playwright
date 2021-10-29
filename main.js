@@ -71,13 +71,13 @@ async function readPages(setting) {
         
         for (let i = 0; i < Object.keys(pageSetting.tasks).length; i++) {
             const task = pageSetting.tasks[i];
-            adapter.log.info(`do task ${JSON.stringify(task)}`);
             if(task.action === 'readInterval') {
-                        setInterval(async () => {
-                            for (let j = 0; j < Object.keys(task.tasks).length; j++) {
-                                await doTask(page, task.tasks[j]);
-                            }
-                        }, task.options.time_ms);
+                setInterval(async () => {
+                    for (let j = 0; j < Object.keys(task.tasks).length; j++) {
+                        await doTask(page, task.tasks[j]);
+                    }
+                }, task.options.time_ms);
+                continue;
             }
             await doTask(page, task);
         }
@@ -94,40 +94,44 @@ async function doTask(page, task) {
         adapter.setStateAsync(task.options.setOnSuccess__state__, {val: 'true', ack: true});
     }
     
-    switch (task.action) {
-        case "goto":
-            await page.goto(task.url);
-            break;
-        case "waitForSelector":
-            await page.waitForSelector(task.selector);
-            break;
-        case "selectOption":
-            await page.selectOption(task.selector, { label: task.select_labeled });
-            break;
-        case "fill":
-            await page.selectOption(task.selector, { label: task.value });
-            break;
-        case "click":
-            await page.click(task.selector);
-            break;
-        case "waitForTimeout":
-            await page.waitForTimeout(task.time_ms);
-            break;
-        case "readInterval":
-            await page.waitForTimeout(task.time_ms);
-            break;
-        case "readElementToState":
-            const content = await page.content();
-            const dom = new JSDOM(content);
-            if(dom && dom.window && dom.window.document) {
-                const document = dom.window.document;
-                let domElementContent = document.querySelector(task.selector) ? document.querySelector(task.selector).textContent : task.fallback;
-                adapter.setStateAsync(task.__state__, {
-                    val: domElementContent.toString(),
-                    ack: true
-                });
-            }
-            break;
+    try {
+        switch (task.action) {
+            case "goto":
+                await page.goto(task.url);
+                break;
+            case "waitForSelector":
+                await page.waitForSelector(task.selector);
+                break;
+            case "selectOption":
+                await page.selectOption(task.selector, { label: task.select_labeled });
+                break;
+            case "fill":
+                await page.selectOption(task.selector, { label: task.value });
+                break;
+            case "click":
+                await page.click(task.selector);
+                break;
+            case "waitForTimeout":
+                await page.waitForTimeout(task.time_ms);
+                break;
+            case "readInterval":
+                await page.waitForTimeout(task.time_ms);
+                break;
+            case "readElementToState":
+                const content = await page.content();
+                const dom = new JSDOM(content);
+                if(dom && dom.window && dom.window.document) {
+                    const document = dom.window.document;
+                    let domElementContent = document.querySelector(task.selector) ? document.querySelector(task.selector).textContent : task.fallback;
+                    adapter.setStateAsync(task.__state__, {
+                        val: domElementContent.toString(),
+                        ack: true
+                    });
+                }
+                break;
+        }
+    } catch (e) {
+        adapter.log.warn(`could not do Task: ${JSON.stringify(task)}`);
     }
 }
 

@@ -109,6 +109,7 @@ async function doTask(page, pageName, task) {
                 const dom = new JSDOM(content);
                 if(dom && dom.window && dom.window.document) {
                     const document = dom.window.document;
+                    await page.waitForSelector(task.selector);
                     let domElementContent = document.querySelector(task.selector) ? document.querySelector(task.selector).textContent : task.fallback;
                     adapter.setStateAsync(pageName + '.' + task.__state__, {
                         val: domElementContent.toString(),

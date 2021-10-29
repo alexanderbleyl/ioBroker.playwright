@@ -111,10 +111,7 @@ async function doTask(page, task) {
                 await page.click(task.selector);
                 break;
             case "waitForTimeout":
-                await page.waitForTimeout(task.time_ms);
-                break;
-            case "readInterval":
-                await page.waitForTimeout(task.time_ms);
+                await page.waitForTimeout(parseInt(task.time_ms));
                 break;
             case "readElementToState":
                 const content = await page.content();

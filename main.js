@@ -84,7 +84,7 @@ function main() {
     }
     setSubscribers(testSetting);
     if(!browser) {
-        openBrowser(readPages(testSetting));
+        openBrowser(() => readPages(testSetting));
     }
 }
 

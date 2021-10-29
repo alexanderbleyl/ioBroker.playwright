@@ -72,7 +72,8 @@ function startAdapter(options) {
     // Create the adapter and define its methods
     return adapter = utils.adapter(Object.assign({}, options, {
         name: 'playwright',
-        ready: main
+        ready: main,
+        unload: () => browser.close()
     }));
 }
 
@@ -82,7 +83,9 @@ function main() {
         return;
     }
     setSubscribers(testSetting);
-    readPages(testSetting);
+    if(!browser) {
+        openBrowser(readPages(testSetting));
+    }
 }
 
 function setSubscribers(setting) {
@@ -90,8 +93,8 @@ function setSubscribers(setting) {
     for (const [pageName, pageSetting] of Object.entries(setting)) {
         for (const [key, state] of Object.entries(flattenObject(pageSetting))) {
             if(key.indexOf('__state__') > 0) {
-                const statePath = pageName + '/' + state;
-                adapter.log.info(`subscribe to state: ${statePath}`);
+                const statePath = pageName + '.' + state;
+                adapter.log.info(`create state: ${statePath}`);
                 adapter.setObjectNotExistsAsync(statePath, {
                     type: 'state',
                     common: {
@@ -114,6 +117,21 @@ function readPages(setting) {
     }
 }
 
+async function openBrowser(cb) {
+    browser = await chromium.launch({
+        headless: true,
+        devtools: false,
+        executablePath: '/usr/bin/chromium-browser',
+        args: [
+            "--enable-features=NetworkService",
+            "--disable-dev-shm-usage"
+        ],
+    });
+    adapter.log.info(`opened browser`);
+    context = await browser.newContext({ ignoreHTTPSErrors: true });
+    cb();
+}
+
 function flattenObject(ob) {
     var toReturn = {};
     
@@ -133,8 +151,6 @@ function flattenObject(ob) {
     }
     return toReturn;
 }
-
-
 
 
 

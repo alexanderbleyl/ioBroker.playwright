@@ -107,20 +107,20 @@ async function doTask(page, pageName, task) {
             case "readElementToState":
                 const content = await page.content();
                 const dom = new JSDOM(content);
-                if(dom && dom.window && dom.window.document) {
-                    const document = dom.window.document;
-                    await page.waitForSelector(task.selector);
-                    adapter.log.warn(`task with selector '${task.selector}' found`);
-                    // let domElementContent = document.querySelector(task.selector) ? document.querySelector(task.selector).textContent : task.fallback;
-                    // adapter.setStateAsync(pageName + '.' + task.__state__, {
-                    //     val: domElementContent.toString(),
-                    //     ack: true
-                    // });
-                }
+                adapter.log.info(`get dom: ${JSON.stringify(dom)}`);
+                // if(dom && dom.window && dom.window.document) {
+                //     const document = dom.window.document;
+                //     adapter.log.warn(`task with selector '${task.selector}' found`);
+                //     // let domElementContent = document.querySelector(task.selector) ? document.querySelector(task.selector).textContent : task.fallback;
+                //     // adapter.setStateAsync(pageName + '.' + task.__state__, {
+                //     //     val: domElementContent.toString(),
+                //     //     ack: true
+                //     // });
+                // }
                 break;
         }
     } catch (e) {
-        adapter.log.warn(`could not do Task: ${JSON.stringify(task)}`);
+        adapter.log.warn(`could not do Task: ${JSON.stringify(task)}: '${e}'`);
     }
     
     if(task.log) {

@@ -52,11 +52,11 @@ let testSetting = {
             "time_ms": "5000",
             "setting": {
                 "options": {
-                    "setStateOnSuccess": "sma_sunny_island_connected"
+                    "setOnSuccess__state__": "sma_sunny_island_connected"
                 },
                 0: {
                     "action": "readElementToState",
-                    "state": "battery_charge",
+                    "__state__": "battery_charge",
                     "selector": "#v6180_08214800",
                     "fallback": "unknown"
                 }
@@ -87,27 +87,31 @@ function main() {
 
 function setSubscribers(setting) {
     adapter.log.info(`subscribe to state: ${JSON.stringify(flattenObject(setting))}`);
-    for (const [key, state] of Object.entries(flattenObject(setting))) {
-        if(key.indexOf('.state') > 0) {
-            adapter.log.info(`subscribe to state: ${state}`);
-            // adapter.setObjectNotExistsAsync(state, {
-            //     type: 'state',
-            //     common: {
-            //         name: state,
-            //         type: 'string',
-            //         role: 'indicator',
-            //         read: true,
-            //         write: true,
-            //     },
-            //     native: {},
-            // });
-            // adapter.subscribeStates(state);
+    for (const [pageName, pageSetting] of Object.entries(setting)) {
+        for (const [key, state] of Object.entries(flattenObject(pageSetting))) {
+            if(key.indexOf('__state__') > 0) {
+                const statePath = pageName + '/' + state;
+                adapter.log.info(`subscribe to state: ${statePath}`);
+                adapter.setObjectNotExistsAsync(statePath, {
+                    type: 'state',
+                    common: {
+                        name: state,
+                        type: 'string',
+                        role: 'indicator',
+                        read: true,
+                        write: true,
+                    },
+                    native: {},
+                });
+            }
         }
     }
 }
 
 function readPages(setting) {
-    adapter.log.info(`readPages with setting: ${JSON.stringify(setting)}`);
+    for (const [pageName, pageSetting] of Object.entries(setting)) {
+        adapter.log.info(`readPage ${pageName} with setting: ${JSON.stringify(pageSetting)}`);
+    }
 }
 
 function flattenObject(ob) {

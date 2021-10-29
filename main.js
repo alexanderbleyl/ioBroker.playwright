@@ -121,6 +121,10 @@ async function doTask(page, pageName, task) {
     } catch (e) {
         adapter.log.warn(`could not do Task: ${JSON.stringify(task)}`);
     }
+    
+    if(task.log) {
+        adapter.log.info(task.log);
+    }
 }
 
 async function openBrowser() {

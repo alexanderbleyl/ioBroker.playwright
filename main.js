@@ -77,7 +77,6 @@ async function readPages(setting) {
                         await doTask(page, task.tasks[j]);
                     }
                 }, task.options.time_ms);
-                continue;
             }
             await doTask(page, task);
         }
@@ -106,7 +105,7 @@ async function doTask(page, task) {
                 await page.selectOption(task.selector, { label: task.select_labeled });
                 break;
             case "fill":
-                await page.selectOption(task.selector, { label: task.value });
+                await page.fill(task.selector, task.value);
                 break;
             case "click":
                 await page.click(task.selector);

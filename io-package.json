@@ -24,7 +24,7 @@
         "mode": "daemon",
         "icon": "playwright.png",
         "enabled": true,
-        "extIcon": "https://raw.githubusercontent.com/alexanderbleyl/ioBroker.playwright/master/admin/discord_bot.png",
+        "extIcon": "https://raw.githubusercontent.com/alexanderbleyl/ioBroker.playwright/master/admin/playwright.png",
         "keywords": [
             "Playwright"
         ],

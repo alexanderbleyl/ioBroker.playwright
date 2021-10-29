@@ -87,6 +87,7 @@ async function doTask(page, pageName, task) {
         switch (task.action) {
             case "goto":
                 await page.goto(task.url);
+                adapter.log.info(`opened page ${task.url}`);
                 break;
             case "waitForSelector":
                 await page.waitForSelector(task.selector);

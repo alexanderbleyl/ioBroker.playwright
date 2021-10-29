@@ -74,18 +74,18 @@ async function readPages(setting) {
             if(task.action === 'readInterval') {
                 setInterval(async () => {
                     for (let j = 0; j < Object.keys(task.tasks).length; j++) {
-                        await doTask(page, task.tasks[j]);
+                        await doTask(page, pageName, task.tasks[j]);
                     }
                 }, task.options.time_ms);
             }
-            await doTask(page, task);
+            await doTask(page, pageName, task);
         }
         
         adapter.log.info(`readPage ${pageName} with setting: ${JSON.stringify(pageSetting)}`);
     }
 }
 
-async function doTask(page, task) {
+async function doTask(page, pageName, task) {
     
     adapter.log.info(`do Task: ${JSON.stringify(task)}`);
     
@@ -119,7 +119,7 @@ async function doTask(page, task) {
                 if(dom && dom.window && dom.window.document) {
                     const document = dom.window.document;
                     let domElementContent = document.querySelector(task.selector) ? document.querySelector(task.selector).textContent : task.fallback;
-                    adapter.setStateAsync(task.__state__, {
+                    adapter.setStateAsync(pageName + '.' + task.__state__, {
                         val: domElementContent.toString(),
                         ack: true
                     });

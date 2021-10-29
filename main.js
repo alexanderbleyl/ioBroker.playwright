@@ -36,13 +36,10 @@ function main() {
 }
 
 function setSubscribers(setting) {
-    adapter.log.info(`subscribe to state: ${JSON.stringify(flattenObject(setting))}`);
     for (const [pageName, pageSetting] of Object.entries(setting)) {
         for (const [key, state] of Object.entries(flattenObject(pageSetting))) {
             if(key.indexOf('__state__') > 0) {
-                const statePath = pageName + '.' + state;
-                adapter.log.info(`create state: ${statePath}`);
-                adapter.setObjectNotExistsAsync(statePath, {
+                adapter.setObjectNotExistsAsync(pageName + '.' + state, {
                     type: 'state',
                     common: {
                         name: state,
@@ -62,9 +59,7 @@ async function readPages(setting) {
     for (const [pageName, pageSetting] of Object.entries(setting)) {
         const page = await context.newPage();
         if(pageSetting.options && pageSetting.options.reloadPageInterval_sec) {
-            adapter.log.info(`reload page '${pageName}' every ${pageSetting.options.reloadPageInterval_sec}s`);
             setInterval(async() => {
-                adapter.log.info(`reload page ${pageName}`);
                 await page.reload();
             }, parseInt(pageSetting.options.reloadPageInterval_sec) * 1000); //30mins
         }
@@ -80,15 +75,10 @@ async function readPages(setting) {
             }
             await doTask(page, pageName, task);
         }
-        
-        adapter.log.info(`readPage ${pageName} with setting: ${JSON.stringify(pageSetting)}`);
     }
 }
 
 async function doTask(page, pageName, task) {
-    
-    adapter.log.info(`do Task: ${JSON.stringify(task)}`);
-    
     if(task.options && task.options.setOnSuccess__state__) {
         adapter.setStateAsync(pageName + '.' + task.options.setOnSuccess__state__, {val: 'true', ack: true});
     }
@@ -141,7 +131,6 @@ async function openBrowser() {
             "--disable-dev-shm-usage"
         ],
     });
-    adapter.log.info(`opened browser`);
     context = await browser.newContext({ ignoreHTTPSErrors: true });
 }
 

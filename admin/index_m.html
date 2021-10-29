@@ -21,13 +21,7 @@
             $('.value').each(function () {
                 var $key = $(this);
                 var id = $key.attr('id');
-                if ($key.attr('type') === 'checkbox') {
-                    // do not call onChange direct, because onChange could expect some arguments
-                    $key.prop('checked', settings[id]).on('change', () => onChange());
-                } else {
-                    // do not call onChange direct, because onChange could expect some arguments
-                    $key.val(atob(settings[id])).on('change', () => onChange()).on('keyup', () => onChange());
-                }
+                $key.val(atob(settings[id])).on('change', () => onChange()).on('keyup', () => onChange());
             });
             onChange(false);
             // reinitialize all the Materialize labels on the page if you are dynamically adding inputs:
@@ -40,13 +34,7 @@
             var obj = {};
             $('.value').each(function () {
                 var $this = $(this);
-                if ($this.attr('type') === 'checkbox') {
-                    obj[$this.attr('id')] = $this.prop('checked');
-                } else if ($this.attr('type') === 'number') {
-                    obj[$this.attr('id')] = parseFloat($this.val());
-                } else {
-                    obj[$this.attr('id')] = btoa($this.val());
-                }
+                obj[$this.attr('id')] = btoa($this.val());
             });
             callback(obj);
         }
@@ -54,11 +42,17 @@
 </head>
 <body>
 <div class="m adapter-container">
-    <input type="text" class="value" id="setting" />
-    
-    <!-- pages als Baum -->
-    <!-- reihenfolge von befehlen, werden dann per switch case in playwright-befehle übersetzt -->
-    
+    <textarea type="text" class="value" id="setting">
+    </textarea>
 </div>
+<style>
+    .adapter-container {
+        height: 100%;
+    }
+    .adapter-container textarea {
+        width: 100%;
+        height: 100%;
+    }
+</style>
 </body>
 </html>

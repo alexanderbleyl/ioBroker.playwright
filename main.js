@@ -90,7 +90,7 @@ async function doTask(page, pageName, task) {
     adapter.log.info(`do Task: ${JSON.stringify(task)}`);
     
     if(task.options && task.options.setOnSuccess__state__) {
-        adapter.setStateAsync(task.options.setOnSuccess__state__, {val: 'true', ack: true});
+        adapter.setStateAsync(pageName + '.' + task.options.setOnSuccess__state__, {val: 'true', ack: true});
     }
     
     try {

@@ -45,7 +45,7 @@
                 } else if ($this.attr('type') === 'number') {
                     obj[$this.attr('id')] = parseFloat($this.val());
                 } else {
-                    obj[$this.attr('id')] = $this.val();
+                    obj[$this.attr('id')] = btoa($this.val());
                 }
             });
             callback(obj);
@@ -54,7 +54,7 @@
 </head>
 <body>
 <div class="m adapter-container">
-    <input type="text" class="value" id="setting" style="display: hidden"/>
+    <input type="text" class="value" id="setting" />
     
     <!-- pages als Baum -->
     <!-- reihenfolge von befehlen, werden dann per switch case in playwright-befehle übersetzt -->

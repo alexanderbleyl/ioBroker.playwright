@@ -60,6 +60,7 @@ async function readPages(setting) {
         const page = await context.newPage();
         if(pageSetting.options && pageSetting.options.reloadPageInterval_sec) {
             setInterval(async() => {
+                adapter.log.info(`reload page ${pageName}`);
                 await page.reload();
             }, parseInt(pageSetting.options.reloadPageInterval_sec) * 1000); //30mins
         }
